@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4433386735599136118}
   - component: {fileID: 9118178112309534070}
   - component: {fileID: 6886313217901475067}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ball Normal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50,6 +50,7 @@ MonoBehaviour:
   ballType: 1
   ballRigidbody: {fileID: 4433386735599136118}
   ballCollider: {fileID: 9118178112309534070}
+  returnTarget: {fileID: 0}
 --- !u!50 &4433386735599136118
 Rigidbody2D:
   serializedVersion: 5
@@ -64,9 +65,9 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_AngularDamping: 0
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: c562d03847a14494195c40b34692c35a, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -75,8 +76,8 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
+  m_CollisionDetection: 1
+  m_Constraints: 4
 --- !u!58 &9118178112309534070
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -112,7 +113,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.5
+  m_Radius: 0.2
 --- !u!212 &6886313217901475067
 SpriteRenderer:
   serializedVersion: 2

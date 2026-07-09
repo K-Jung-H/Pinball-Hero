@@ -8,7 +8,9 @@ public class PlayerRenderer : MonoBehaviour
     [SerializeField] private Vector2 headLeftOffset;
     [SerializeField] private Vector2 headRightOffset;
 
-    [SerializeField] private float rotationClampAngle = 45f;
+    [SerializeField] private float headRotationOffsetZ;
+    [SerializeField] private float headDownRotationLimitZ = 20f;
+    [SerializeField] private float headUpRotationLimitZ = 30f;
     [SerializeField] private float flipDeadZone = 0.05f;
 
     private bool isFacingRight;
@@ -43,11 +45,16 @@ public class PlayerRenderer : MonoBehaviour
         float baseAngle = isFacingRight ? 0f : 180f;
         float headRotationZ = Mathf.DeltaAngle(baseAngle, angle);
 
+        float minRotationZ = isFacingRight ? -headDownRotationLimitZ : -headUpRotationLimitZ;
+        float maxRotationZ = isFacingRight ? headUpRotationLimitZ : headDownRotationLimitZ;
+
         headRotationZ = Mathf.Clamp(
             headRotationZ,
-            -rotationClampAngle,
-            rotationClampAngle
+            minRotationZ,
+            maxRotationZ
         );
+
+        headRotationZ += isFacingRight ? headRotationOffsetZ : -headRotationOffsetZ;
 
         characterHead.transform.localRotation =
             Quaternion.Euler(0f, 0f, headRotationZ);

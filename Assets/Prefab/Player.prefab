@@ -323,6 +323,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   playerRenderer: {fileID: 7596003906225895772}
+  ballShooter: {fileID: 5196537336471141868}
 --- !u!114 &7596003906225895772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -339,7 +340,9 @@ MonoBehaviour:
   characterBody: {fileID: 9036805880757208696}
   headLeftOffset: {x: 0, y: 0.3}
   headRightOffset: {x: 0, y: 0.3}
-  rotationClampAngle: 60
+  headRotationOffsetZ: 0
+  headDownRotationLimitZ: 20
+  headUpRotationLimitZ: 30
   flipDeadZone: 0.05
 --- !u!1 &8963171213293827652
 GameObject:
@@ -350,7 +353,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6051517614846702486}
-  m_Layer: 0
+  - component: {fileID: 5196537336471141868}
+  - component: {fileID: 5209084807906690220}
+  m_Layer: 10
   m_Name: Shooter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -372,3 +377,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6142160490027218824}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5196537336471141868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8963171213293827652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b98c393036a59c84090b6295829e8843, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BallShooter
+  ballFactory: {fileID: 11400000, guid: 4424439464b255f48a74c261b246e5b7, type: 2}
+  spawnPoint: {fileID: 6051517614846702486}
+  defaultBallCount: 3
+  launchInterval: 0.5
+  launchSpeed: 20
+--- !u!58 &5209084807906690220
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8963171213293827652}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_Radius: 0.3

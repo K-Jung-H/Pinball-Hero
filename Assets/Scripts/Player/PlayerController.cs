@@ -6,8 +6,11 @@ public class PlayerController : MonoBehaviour
     private Camera mainCamera;
 
     [SerializeField] private PlayerRenderer playerRenderer;
+    [SerializeField] private BallShooter ballShooter;
 
     private Vector2 lastAimDirection = Vector2.up;
+
+    public BallShooter BallShooter => ballShooter;
 
     private void Awake()
     {
@@ -41,12 +44,13 @@ public class PlayerController : MonoBehaviour
 
         Vector2 direction = (Vector2)worldPosition - (Vector2)transform.position;
 
-        if (direction.sqrMagnitude <= 0.0001f)
+        if (direction.sqrMagnitude <= 0.0001f || direction.y <= 0f)
         {
             return;
         }
 
         lastAimDirection = direction.normalized;
         playerRenderer.SetAimDirection(lastAimDirection);
+        ballShooter.SetLaunchDirection(lastAimDirection);
     }
 }
