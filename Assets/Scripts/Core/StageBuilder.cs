@@ -4,6 +4,7 @@ public class StageBuilder : MonoBehaviour
 {
     [SerializeField] private PlayerController playerController;
     [SerializeField] private CombatPipeline combatPipeline;
+    [SerializeField] private DamageTextSystem damageTextSystem;
     [SerializeField] private WaveSpawner waveSpawner;
     [SerializeField] private StageDefinitionSO stageDefinition;
 
@@ -30,6 +31,11 @@ public class StageBuilder : MonoBehaviour
         }
 
         ballShooter.SetCombatPipeline(combatPipeline);
+
+        if (damageTextSystem != null)
+        {
+            damageTextSystem.SetCombatPipeline(combatPipeline);
+        }
 
         if (waveSpawner == null)
         {

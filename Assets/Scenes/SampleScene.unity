@@ -335,7 +335,7 @@ MonoBehaviour:
   m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000
+  m_ApplyToSortingLayers: 000000007db09d68398219baf90a862e
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -477,6 +477,127 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1841272617
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1841272619}
+  - component: {fileID: 1841272618}
+  m_Layer: 0
+  m_Name: DamageTextSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1841272618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1841272617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c80d66d1946af0f41b2d72a569b17ab7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DamageTextPool
+  prefab: {fileID: 8891545013298743581, guid: 86db3201cc2635c48bcd2348adf8f2ee, type: 3}
+  container: {fileID: 1841272619}
+  initialPoolSize: 32
+  allowPoolExpand: 0
+  maxSpawnPerFrame: 8
+  worldOffset: {x: 0, y: 0.35, z: 0}
+  profiles:
+  - feedbackType: 0
+    color: {r: 1, g: 1, b: 1, a: 1}
+    duration: 0.65
+    riseSpeed: 1.5
+    scaleCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.65
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.18
+        value: 1.25
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    alphaCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.65
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+--- !u!4 &1841272619
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1841272617}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1872571407
 GameObject:
   m_ObjectHideFlags: 0
@@ -507,7 +628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ef9619be2ac9a84abc5d4c76b7babda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatPipeline
-  defaultBallDamage: 5
+  defaultBallDamage: 12
 --- !u!4 &1872571409
 Transform:
   m_ObjectHideFlags: 0
@@ -537,6 +658,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::StageBuilder
   playerController: {fileID: 1984117264}
   combatPipeline: {fileID: 1872571408}
+  damageTextSystem: {fileID: 1841272618}
   waveSpawner: {fileID: 856522828}
   stageDefinition: {fileID: 11400000, guid: d8fcca3d5cb603843a741b43949c6f0f, type: 2}
 --- !u!114 &1984117264 stripped
@@ -785,5 +907,6 @@ SceneRoots:
   - {fileID: 1153134961213262917}
   - {fileID: 6148095637007997123}
   - {fileID: 1872571409}
+  - {fileID: 1841272619}
   - {fileID: 856522831}
   - {fileID: 293760595}

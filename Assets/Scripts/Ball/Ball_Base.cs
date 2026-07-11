@@ -30,7 +30,7 @@ public class Ball_Base : MonoBehaviour
     private int wallHitCount;
 
     public event Action<Ball_Base> ReturnRequested;
-    public event Action<Ball_Base, Enemy_Base> EnemyHit;
+    public event Action<Ball_Base, Enemy_Base, Vector2> EnemyHit;
 
     public BallType BallType => ballType;
     public int WallHitCount => wallHitCount;
@@ -167,7 +167,11 @@ public class Ball_Base : MonoBehaviour
 
             if (enemy != null)
             {
-                EnemyHit?.Invoke(this, enemy);
+                Vector2 hitPoint = collision.contactCount > 0
+                    ? collision.GetContact(0).point
+                    : (Vector2)transform.position;
+
+                EnemyHit?.Invoke(this, enemy, hitPoint);
             }
         }
 
