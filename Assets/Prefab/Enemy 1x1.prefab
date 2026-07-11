@@ -53,7 +53,7 @@ MonoBehaviour:
   hpMax: 30
   hpCurrent: 0
   hpBar: {fileID: 7134735644318652682}
-  bodyCollider: {fileID: 0}
+  bodyCollider: {fileID: 131858967200871941}
 --- !u!114 &-6673638384780788241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68,9 +68,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimator
   enemy: {fileID: 5516757277634250523}
   animator: {fileID: -2784658045314654227}
+  bodyTransform: {fileID: 2821814392317714276}
+  blockSprite: {fileID: 107385797457068293}
+  idleStateName: Idle
   hitTriggerName: Hit
-  attackTriggerName: Attack
   deathTriggerName: Death
+  attackDuration: 0.35
 --- !u!61 &131858967200871941
 BoxCollider2D:
   m_ObjectHideFlags: 0

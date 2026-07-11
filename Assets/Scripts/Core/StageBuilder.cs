@@ -37,6 +37,7 @@ public class StageBuilder : MonoBehaviour
             return;
         }
 
+        waveSpawner.SetAttackTarget(playerController.transform);
         waveSpawner.StartStage(stageDefinition);
     }
 }

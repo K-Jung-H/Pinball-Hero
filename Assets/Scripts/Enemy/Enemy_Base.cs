@@ -1,8 +1,17 @@
 using System;
 using UnityEngine;
 
+public enum EnemyState
+{
+    Moving,
+    Attacking,
+    Dead
+}
+
 public class Enemy_Base : MonoBehaviour
 {
+    private static int endlineLayer = -1;
+
     [SerializeField] private int hpMax;
     [SerializeField] private int hpCurrent;
     [SerializeField] private EnemyHpBar hpBar;
@@ -10,24 +19,38 @@ public class Enemy_Base : MonoBehaviour
 
     private int damage;
     private float speed;
-    private bool isDead;
-    private bool hasReachedEndline;
+    private EnemyState state;
+    private Transform attackTarget;
 
     public int Damage => damage;
-    public bool IsDead => isDead;
+    public bool IsDead => state == EnemyState.Dead;
+    public EnemyState State => state;
+    public Transform AttackTarget => attackTarget;
 
     public event Action<Enemy_Base> EnemyDamaged;
     public event Action<Enemy_Base> EnemyDied;
     public event Action<Enemy_Base> EndlineReached;
+    public event Action<Enemy_Base, int> EnemyAttackCompleted;
     public event Action<Enemy_Base, int, int> HpChanged;
 
     private void Awake()
     {
+        InitializeLayer();
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (state != EnemyState.Moving || other.gameObject.layer != endlineLayer)
+        {
+            return;
+        }
+
+        ReachEndline();
     }
 
     private void Update()
     {
-        if (isDead || hasReachedEndline)
+        if (state != EnemyState.Moving)
         {
             return;
         }
@@ -46,8 +69,7 @@ public class Enemy_Base : MonoBehaviour
         speed = enemyDefinition.Speed;
         hpMax = enemyDefinition.MaxHp;
         hpCurrent = hpMax;
-        isDead = false;
-        hasReachedEndline = false;
+        state = EnemyState.Moving;
 
         if (bodyCollider != null)
         {
@@ -60,9 +82,14 @@ public class Enemy_Base : MonoBehaviour
         }
     }
 
+    public void SetAttackTarget(Transform target)
+    {
+        attackTarget = target;
+    }
+
     public void TakeDamage(int value)
     {
-        if (isDead || hasReachedEndline)
+        if (state != EnemyState.Moving)
         {
             return;
         }
@@ -94,12 +121,23 @@ public class Enemy_Base : MonoBehaviour
 
     public bool ReachEndline()
     {
-        if (isDead || hasReachedEndline)
+        if (state != EnemyState.Moving)
         {
             return false;
         }
 
-        hasReachedEndline = true;
+        state = EnemyState.Attacking;
+
+        if (bodyCollider != null)
+        {
+            bodyCollider.enabled = false;
+        }
+
+        if (hpBar != null)
+        {
+            hpBar.Hide();
+        }
+
         EndlineReached?.Invoke(this);
 
         return true;
@@ -107,7 +145,14 @@ public class Enemy_Base : MonoBehaviour
 
     public void CompleteEndlineAttack()
     {
-        Die();
+        if (state != EnemyState.Attacking)
+        {
+            return;
+        }
+
+        state = EnemyState.Dead;
+        EnemyAttackCompleted?.Invoke(this, damage);
+        Despawn();
     }
 
     public void Despawn()
@@ -117,13 +162,13 @@ public class Enemy_Base : MonoBehaviour
 
     private void Die()
     {
-        if (isDead)
+        if (state == EnemyState.Dead)
         {
             return;
         }
 
         Debug.Log("Enemy Dead!");
-        isDead = true;
+        state = EnemyState.Dead;
 
         if (bodyCollider != null)
         {
@@ -136,5 +181,20 @@ public class Enemy_Base : MonoBehaviour
         }
 
         EnemyDied?.Invoke(this);
+    }
+
+    private static void InitializeLayer()
+    {
+        if (endlineLayer != -1)
+        {
+            return;
+        }
+
+        endlineLayer = LayerMask.NameToLayer("Endline");
+
+        if (endlineLayer == -1)
+        {
+            Debug.LogError("Endline layer is not defined.");
+        }
     }
 }

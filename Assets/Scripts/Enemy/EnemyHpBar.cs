@@ -82,14 +82,11 @@ public class EnemyHpBar : MonoBehaviour
 
     private void SetVisible(bool value)
     {
-        if (backgroundSprite != null)
+        if (gameObject.activeSelf == value)
         {
-            backgroundSprite.enabled = value;
+            return;
         }
 
-        if (fillSprite != null)
-        {
-            fillSprite.enabled = value;
-        }
+        gameObject.SetActive(value);
     }
 }

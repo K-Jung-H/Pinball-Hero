@@ -10,6 +10,7 @@ public class WaveSpawner : MonoBehaviour
 
     private readonly List<SpawnedEnemyState> activeEnemies = new List<SpawnedEnemyState>();
 
+    private Transform attackTarget;
     private StageDefinitionSO stageDefinition;
     private WaveDefinitionSO waveDefinition;
     private bool[] spawnedEntries;
@@ -18,6 +19,11 @@ public class WaveSpawner : MonoBehaviour
     private int nextSpawnLine;
     private float spawnTimer;
     private bool isRunning;
+
+    public void SetAttackTarget(Transform target)
+    {
+        attackTarget = target;
+    }
 
     public void StartStage(StageDefinitionSO definition)
     {
@@ -174,7 +180,9 @@ public class WaveSpawner : MonoBehaviour
         Vector3 position = GetSpawnPosition(entry, enemyDefinition, anchorLine);
         Enemy_Base enemy = Instantiate(prefab, position, Quaternion.identity, spawnedEnemyRoot);
         enemy.Initialize(enemyDefinition);
+        enemy.SetAttackTarget(attackTarget);
         enemy.EnemyDied += OnEnemyDied;
+        enemy.EndlineReached += OnEnemyEndlineReached;
         activeEnemies.Add(new SpawnedEnemyState(enemy, enemyDefinition));
 
         return true;
@@ -185,6 +193,18 @@ public class WaveSpawner : MonoBehaviour
         if (enemy != null)
         {
             enemy.EnemyDied -= OnEnemyDied;
+            enemy.EndlineReached -= OnEnemyEndlineReached;
+        }
+
+        RemoveActiveEnemy(enemy);
+    }
+
+    private void OnEnemyEndlineReached(Enemy_Base enemy)
+    {
+        if (enemy != null)
+        {
+            enemy.EnemyDied -= OnEnemyDied;
+            enemy.EndlineReached -= OnEnemyEndlineReached;
         }
 
         RemoveActiveEnemy(enemy);

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyDefinitionSO
   enemyPrefab: {fileID: 5516757277634250523, guid: 3b9ab78c2a46cca47a6a1a413f5d8a14, type: 3}
   maxHp: 20
+  damage: 0
   cellWidth: 1
   cellHeight: 2
-  moveSpeed: 1
+  moveSpeed: 3
