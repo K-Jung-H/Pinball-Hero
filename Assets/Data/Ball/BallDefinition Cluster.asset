@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d660352261d0c42ab8d32d2debad64, type: 3}
+  m_Name: BallDefinition Cluster
+  m_EditorClassIdentifier: Assembly-CSharp::BallDefinitionSO
+  ballType: 6
+  prefab: {fileID: 4965503838376983313, guid: 694e1da0065fb654694b6498ca9c962f, type: 3}
+  damageType: 4
+  baseHitDamage: 0
+  baseMoveSpeed: 20
+  baseCritChance: 0
+  baseCritDamageMultiplier: 1.5
+  effects:
+  - {fileID: 11400000, guid: 4f5e6d7c8b9aa109879aa9b8c7d6e5f4, type: 2}

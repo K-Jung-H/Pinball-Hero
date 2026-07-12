@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2947566d3ab0594e2c1b0af937e7019, type: 3}
+  m_Name: IceBallCardDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::IceBallCardDefinitionSO
+  ballType: 3
+  levels:
+  - level: 1
+    hitDamageAdd: 25
+    hitDamageMultiplier: 1
+    moveSpeedMultiplier: 1
+    freezeChance: 0.3
+    freezeDuration: 5
+    slowRatio: 0.1
+    extraDamageRatio: 0.1
+  - level: 2
+    hitDamageAdd: 37
+    hitDamageMultiplier: 1
+    moveSpeedMultiplier: 1
+    freezeChance: 0.35
+    freezeDuration: 6
+    slowRatio: 0.15
+    extraDamageRatio: 0.15
+  - level: 3
+    hitDamageAdd: 50
+    hitDamageMultiplier: 1
+    moveSpeedMultiplier: 1
+    freezeChance: 0.4
+    freezeDuration: 7
+    slowRatio: 0.2
+    extraDamageRatio: 0.2

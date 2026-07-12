@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6d8b9aa17ef49c9826a5e1c0d3f7b24, type: 3}
+  m_Name: StageBallProgressSet
+  m_EditorClassIdentifier: Assembly-CSharp::StageBallProgressSetSO
+  progresses:
+  - ballType: 1
+    upgradeLevel: 1
+    unlocked: 1

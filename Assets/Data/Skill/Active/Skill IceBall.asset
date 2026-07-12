@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a1c0d0e5b2f4d1c9a8b6e3f2c4a9011, type: 3}
+  m_Name: Skill IceBall
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveBallSkillDefinitionSO
+  skillId: ice_ball
+  displayName: "\uC544\uC774\uC2A4\uBCFC"
+  icon: {fileID: 498749362002363885, guid: 8fb6393ba6db4034aa1a9e65092dcacf, type: 3}
+  maxLevel: 3
+  descriptionFormat: "\uBCFC \uD53C\uD574 {hitDamage}({hitDamageDelta}). {chance}({chanceDelta})%
+    \uD655\uB960\uB85C {duration}({durationDelta})\uCD08 \uB0C9\uB3D9. \uC774\uB3D9\uC18D\uB3C4
+    {slow}({slowDelta})% \uAC10\uC18C, \uCD94\uAC00 \uD53C\uD574 {extraDamage}({extraDamageDelta})%."
+  targetBallType: 3
+  ballCardDefinition: {fileID: 11400000, guid: d24e1923817a4d40891f49163422058b, type: 2}

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4b69788f5cd27b604e3d2c1b59a9031, type: 3}
+  m_Name: GhostBallCardDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::GhostBallCardDefinitionSO
+  ballType: 5
+  levels:
+  - level: 1
+    hitDamageAdd: 14
+    hitDamageMultiplier: 1
+    moveSpeedMultiplier: 1
+  - level: 2
+    hitDamageAdd: 21
+    hitDamageMultiplier: 1
+    moveSpeedMultiplier: 1
+  - level: 3
+    hitDamageAdd: 28
+    hitDamageMultiplier: 1
+    moveSpeedMultiplier: 1

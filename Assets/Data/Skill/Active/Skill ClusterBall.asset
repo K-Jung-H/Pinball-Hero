@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a1c0d0e5b2f4d1c9a8b6e3f2c4a9011, type: 3}
+  m_Name: Skill ClusterBall
+  m_EditorClassIdentifier: Assembly-CSharp::ActiveBallSkillDefinitionSO
+  skillId: cluster_ball
+  displayName: "\uD074\uB7EC\uC2A4\uD130 \uBCFC"
+  icon: {fileID: -8720277191398996379, guid: 7244a8f1546285946a394bce50e65b4e, type: 3}
+  maxLevel: 3
+  descriptionFormat: "\uBCFC \uD53C\uD574 {hitDamage}({hitDamageDelta}). \uC801 \uD0C0\uACA9
+    \uC2DC {chance}({chanceDelta})% \uD655\uB960\uB85C {damage}({damageDelta}) \uD53C\uD574
+    \uD2B9\uC218 \uBCFC \uC0DD\uC131."
+  targetBallType: 6
+  ballCardDefinition: {fileID: 11400000, guid: 0b7c25e0770a418fbb830093e56817df, type: 2}

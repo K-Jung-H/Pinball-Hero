@@ -354,6 +354,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6051517614846702486}
   - component: {fileID: 5196537336471141868}
+  - component: {fileID: 2793599055419577450}
   - component: {fileID: 5209084807906690220}
   m_Layer: 10
   m_Name: Shooter
@@ -389,11 +390,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b98c393036a59c84090b6295829e8843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BallShooter
-  ballFactory: {fileID: 11400000, guid: 4424439464b255f48a74c261b246e5b7, type: 2}
+  ballFactory: {fileID: 2793599055419577450}
   spawnPoint: {fileID: 6051517614846702486}
   defaultBallCount: 3
   launchInterval: 0.5
   launchSpeed: 20
+--- !u!114 &2793599055419577450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8963171213293827652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0740d414170865419f6df21898f2723, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BallFactory
+  ballCatalog: {fileID: 11400000, guid: e36118c0a38a8c744b611691921708a7, type: 2}
 --- !u!58 &5209084807906690220
 CircleCollider2D:
   m_ObjectHideFlags: 0
