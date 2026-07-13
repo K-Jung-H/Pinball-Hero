@@ -6,6 +6,10 @@ public sealed class IceBallGrowthDefinitionSO : BallGrowthDefinitionSO
 {
     [SerializeField] private IceBallGrowthLevelData[] levels;
 
+    public override int LevelCount => GetLevelCount(levels);
+
+    public override int GetLevel(int index) => GetLevelAt(levels, index);
+
     public override bool ApplyLevel(int level, BallRuntimeStat runtimeStat)
     {
         if (runtimeStat == null || !TryGetLevelData(levels, level, out IceBallGrowthLevelData levelData))

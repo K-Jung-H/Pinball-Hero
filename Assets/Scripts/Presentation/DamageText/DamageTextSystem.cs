@@ -22,6 +22,7 @@ public class DamageTextSystem : MonoBehaviour
 
     private readonly Queue<DamageResult> pendingResults = new Queue<DamageResult>(64);
     private readonly Queue<DamageTextSprite> availableTexts = new Queue<DamageTextSprite>(64);
+    private readonly List<DamageTextSprite> allTexts = new List<DamageTextSprite>(64);
 
     private CombatPipeline combatPipeline;
 
@@ -88,6 +89,26 @@ public class DamageTextSystem : MonoBehaviour
         }
     }
 
+    public void ResetRun()
+    {
+        pendingResults.Clear();
+        availableTexts.Clear();
+
+        for (int i = allTexts.Count - 1; i >= 0; i--)
+        {
+            DamageTextSprite damageText = allTexts[i];
+
+            if (damageText == null)
+            {
+                allTexts.RemoveAt(i);
+                continue;
+            }
+
+            damageText.gameObject.SetActive(false);
+            availableTexts.Enqueue(damageText);
+        }
+    }
+
     public void Return(DamageTextSprite damageText)
     {
         if (damageText == null)
@@ -133,6 +154,7 @@ public class DamageTextSystem : MonoBehaviour
 
         DamageTextSprite damageText = Instantiate(prefab, container);
         damageText.gameObject.SetActive(false);
+        allTexts.Add(damageText);
         return damageText;
     }
 

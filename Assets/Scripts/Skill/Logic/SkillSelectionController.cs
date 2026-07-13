@@ -48,6 +48,17 @@ public class SkillSelectionController : MonoBehaviour
         ballShooter = shooter;
     }
 
+    public void ResetRun()
+    {
+        Hide();
+        runSkillInventory.Clear();
+
+        if (options != null)
+        {
+            Array.Clear(options, 0, options.Length);
+        }
+    }
+
     public void ShowChoices()
     {
         if (skillCatalog == null || panels == null || panels.Length == 0)

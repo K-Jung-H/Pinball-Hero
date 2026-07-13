@@ -121,6 +121,31 @@ public sealed class DamageArea : MonoBehaviour
         gameObject.SetActive(true);
     }
 
+    public void ResetState()
+    {
+        owner = null;
+        prefabKey = null;
+        combatPipeline = null;
+        damage = 0;
+        fixedStepCount = 0;
+        totalVisualTime = 0f;
+        remainingVisualTime = 0f;
+        isDetecting = false;
+        damagedEnemies.Clear();
+
+        if (areaCollider != null)
+        {
+            areaCollider.enabled = false;
+        }
+
+        if (areaRenderer != null)
+        {
+            areaRenderer.color = initialRendererColor;
+        }
+
+        gameObject.SetActive(false);
+    }
+
     private void TryDamage(Collider2D other)
     {
         if (!isDetecting
@@ -178,26 +203,7 @@ public sealed class DamageArea : MonoBehaviour
 
         AreaEffectSystem poolOwner = owner;
         DamageArea sourcePrefab = prefabKey;
-
-        owner = null;
-        prefabKey = null;
-        combatPipeline = null;
-        damage = 0;
-        totalVisualTime = 0f;
-        remainingVisualTime = 0f;
-        isDetecting = false;
-        damagedEnemies.Clear();
-
-        if (areaCollider != null)
-        {
-            areaCollider.enabled = false;
-        }
-
-        if (areaRenderer != null)
-        {
-            areaRenderer.color = initialRendererColor;
-        }
-
+        ResetState();
         poolOwner.Release(this, sourcePrefab);
     }
 }

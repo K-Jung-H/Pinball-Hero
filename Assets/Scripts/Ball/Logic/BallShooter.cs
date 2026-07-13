@@ -15,40 +15,41 @@ public class BallShooter : MonoBehaviour
     private readonly Queue<Ball_Base> clusterFragmentPool = new Queue<Ball_Base>();
     private readonly Queue<ClusterFragmentSpawnRequest> pendingClusterFragments =
         new Queue<ClusterFragmentSpawnRequest>();
+    private readonly List<Ball_Base> ownedBalls = new List<Ball_Base>();
+    private readonly List<Ball_Base> ownedClusterFragments = new List<Ball_Base>();
 
     private CombatPipeline combatPipeline;
     private StageBallProgress[] stageBallProgresses;
     private RunSkillInventory runSkillInventory;
     private Vector2 launchDirection = Vector2.up;
     private float launchTimer;
+    private bool isRunInitialized;
 
     public void SetCombatPipeline(CombatPipeline pipeline)
     {
         combatPipeline = pipeline;
     }
 
-    public void SetRuntimeData(StageBallProgress[] progress, RunSkillInventory inventory)
+    private void Start()
+    {
+        if (!isRunInitialized)
+        {
+            ResetRun(stageBallProgresses, runSkillInventory);
+        }
+    }
+
+    public void ResetRun(StageBallProgress[] progress, RunSkillInventory inventory)
     {
         stageBallProgresses = progress;
         runSkillInventory = inventory;
-    }
+        launchTimer = 0f;
+        pendingClusterFragments.Clear();
+        readyQueue.Clear();
+        clusterFragmentPool.Clear();
 
-    private void Start()
-    {
-        for (int i = 0; i < defaultBallCount; i++)
-        {
-            AddBall(BallType.Normal);
-        }
-
-        for (int i = 0; i < Mathf.Max(0, clusterFragmentPoolSize); i++)
-        {
-            Ball_Base fragment = CreateClusterFragment();
-
-            if (fragment != null)
-            {
-                clusterFragmentPool.Enqueue(fragment);
-            }
-        }
+        ResetOwnedBalls();
+        ResetClusterFragments();
+        isRunInitialized = true;
     }
 
     private void FixedUpdate()
@@ -109,6 +110,7 @@ public class BallShooter : MonoBehaviour
             combatPipeline.RegisterBall(ball);
         }
 
+        ownedBalls.Add(ball);
         ReturnBall(ball);
     }
 
@@ -247,8 +249,94 @@ public class BallShooter : MonoBehaviour
 
         fragment.ResetState();
         fragment.gameObject.SetActive(false);
+        ownedClusterFragments.Add(fragment);
 
         return fragment;
+    }
+
+    private void ResetOwnedBalls()
+    {
+        int normalBallCount = 0;
+        int targetNormalBallCount = Mathf.Max(0, defaultBallCount);
+
+        for (int i = ownedBalls.Count - 1; i >= 0; i--)
+        {
+            Ball_Base ball = ownedBalls[i];
+
+            if (ball == null)
+            {
+                ownedBalls.RemoveAt(i);
+                continue;
+            }
+
+            if (ball.BallType == BallType.Normal && normalBallCount < targetNormalBallCount)
+            {
+                normalBallCount++;
+                ResetBallToQueue(ball);
+                continue;
+            }
+
+            ball.ReturnRequested -= ReturnBall;
+            combatPipeline?.UnregisterBall(ball);
+            ball.ResetState();
+            ball.gameObject.SetActive(false);
+            Destroy(ball.gameObject);
+            ownedBalls.RemoveAt(i);
+        }
+
+        while (normalBallCount < targetNormalBallCount)
+        {
+            int previousCount = ownedBalls.Count;
+            AddBall(BallType.Normal);
+
+            if (ownedBalls.Count <= previousCount)
+            {
+                break;
+            }
+
+            normalBallCount++;
+        }
+    }
+
+    private void ResetClusterFragments()
+    {
+        for (int i = ownedClusterFragments.Count - 1; i >= 0; i--)
+        {
+            Ball_Base fragment = ownedClusterFragments[i];
+
+            if (fragment == null)
+            {
+                ownedClusterFragments.RemoveAt(i);
+                continue;
+            }
+
+            fragment.ResetState();
+            fragment.transform.position = spawnPoint.position;
+            fragment.gameObject.SetActive(false);
+            clusterFragmentPool.Enqueue(fragment);
+        }
+
+        int targetPoolSize = Mathf.Max(0, clusterFragmentPoolSize);
+
+        while (ownedClusterFragments.Count < targetPoolSize)
+        {
+            Ball_Base fragment = CreateClusterFragment();
+
+            if (fragment == null)
+            {
+                break;
+            }
+
+            clusterFragmentPool.Enqueue(fragment);
+        }
+    }
+
+    private void ResetBallToQueue(Ball_Base ball)
+    {
+        ball.ResetState();
+        ball.transform.position = spawnPoint.position;
+        ball.gameObject.SetActive(false);
+        readyQueue.Enqueue(ball);
     }
 
     private void ReleaseClusterFragment(Ball_Base fragment)

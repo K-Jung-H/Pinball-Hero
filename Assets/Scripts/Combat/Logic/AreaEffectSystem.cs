@@ -31,6 +31,19 @@ public sealed class AreaEffectSystem : MonoBehaviour
         BoardBounds = boardBounds;
     }
 
+    public void ResetRun()
+    {
+        if (poolEntries == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < poolEntries.Length; i++)
+        {
+            poolEntries[i]?.ResetRun();
+        }
+    }
+
     public bool Play(
         DamageArea prefab,
         CombatPipeline combatPipeline,
@@ -110,6 +123,7 @@ public sealed class AreaEffectSystem : MonoBehaviour
         [SerializeField] private int initialPoolSize = 8;
 
         private Queue<DamageArea> availableAreas;
+        private List<DamageArea> allAreas;
 
         public DamageArea Prefab => prefab;
 
@@ -117,6 +131,7 @@ public sealed class AreaEffectSystem : MonoBehaviour
         {
             int capacity = Mathf.Max(0, initialPoolSize);
             availableAreas = new Queue<DamageArea>(capacity);
+            allAreas = new List<DamageArea>(capacity);
 
             for (int i = 0; i < capacity; i++)
             {
@@ -152,6 +167,30 @@ public sealed class AreaEffectSystem : MonoBehaviour
             availableAreas.Enqueue(area);
         }
 
+        public void ResetRun()
+        {
+            if (availableAreas == null || allAreas == null)
+            {
+                return;
+            }
+
+            availableAreas.Clear();
+
+            for (int i = allAreas.Count - 1; i >= 0; i--)
+            {
+                DamageArea area = allAreas[i];
+
+                if (area == null)
+                {
+                    allAreas.RemoveAt(i);
+                    continue;
+                }
+
+                area.ResetState();
+                availableAreas.Enqueue(area);
+            }
+        }
+
         private DamageArea Create(AreaEffectSystem owner)
         {
             if (prefab == null)
@@ -161,6 +200,7 @@ public sealed class AreaEffectSystem : MonoBehaviour
 
             DamageArea area = Instantiate(prefab, owner.transform);
             area.gameObject.SetActive(false);
+            allAreas.Add(area);
             return area;
         }
     }

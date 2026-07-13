@@ -15,7 +15,7 @@ MonoBehaviour:
   ballType: 1
   prefab: {fileID: 4711079998649885964, guid: 491dd71a24ac4d44498ef61fcdb37351, type: 3}
   damageType: 0
-  baseHitDamage: 5
+  baseHitDamage: 8
   baseMoveSpeed: 15
   baseCritChance: 0
   baseCritDamageMultiplier: 1.5

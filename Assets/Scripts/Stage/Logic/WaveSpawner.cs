@@ -10,6 +10,7 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] private float rowSpawnInterval = 1f;
 
     private readonly List<SpawnedEnemyState> activeEnemies = new List<SpawnedEnemyState>();
+    private readonly List<Enemy_Base> spawnedEnemies = new List<Enemy_Base>();
 
     private Transform attackTarget;
     private StageDefinitionSO stageDefinition;
@@ -38,6 +39,40 @@ public class WaveSpawner : MonoBehaviour
     public void SetAttackTarget(Transform target)
     {
         attackTarget = target;
+    }
+
+    public void ResetRun()
+    {
+        isRunning = false;
+
+        for (int i = spawnedEnemies.Count - 1; i >= 0; i--)
+        {
+            Enemy_Base enemy = spawnedEnemies[i];
+
+            if (enemy == null)
+            {
+                continue;
+            }
+
+            enemy.EnemyDied -= OnEnemyDied;
+            enemy.EndlineReached -= OnEnemyEndlineReached;
+            enemy.EnemyAttackCompleted -= OnEnemyAttackCompleted;
+            enemy.gameObject.SetActive(false);
+            Destroy(enemy.gameObject);
+        }
+
+        spawnedEnemies.Clear();
+        activeEnemies.Clear();
+        stageDefinition = null;
+        waveDefinition = null;
+        spawnedEntries = null;
+        initialSpawnRows = 0;
+        currentWaveIndex = 0;
+        nextSpawnLine = 0;
+        pendingAttackCount = 0;
+        spawnTimer = 0f;
+        hasFinishedAllWaves = false;
+        hasRaisedStageCompleted = false;
     }
 
     public void StartStage(StageDefinitionSO definition)
@@ -203,6 +238,7 @@ public class WaveSpawner : MonoBehaviour
         enemy.EnemyDied += OnEnemyDied;
         enemy.EndlineReached += OnEnemyEndlineReached;
         enemy.EnemyAttackCompleted += OnEnemyAttackCompleted;
+        spawnedEnemies.Add(enemy);
         activeEnemies.Add(new SpawnedEnemyState(enemy, enemyDefinition));
 
         return true;

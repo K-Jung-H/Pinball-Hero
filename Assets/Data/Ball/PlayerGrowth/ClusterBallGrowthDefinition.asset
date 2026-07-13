@@ -9,68 +9,68 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6e39bc9488b4bd49a635326ec128a02, type: 3}
-  m_Name: FireBallGrowthDefinition
-  m_EditorClassIdentifier: Assembly-CSharp::FireBallGrowthDefinitionSO
-  ballType: 2
+  m_Script: {fileID: 11500000, guid: a6e39bc9488b4bd49a635326ec128a05, type: 3}
+  m_Name: ClusterBallGrowthDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::ClusterBallGrowthDefinitionSO
+  ballType: 6
   levels:
   - level: 1
     hitDamageAdd: 1
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
-    dotDamageAdd: 0
-    dotDamageMultiplier: 1
+    spawnDamageAdd: 0
+    spawnDamageMultiplier: 1
   - level: 2
     hitDamageAdd: 2
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
-    dotDamageAdd: 0
-    dotDamageMultiplier: 1
+    spawnDamageAdd: 0
+    spawnDamageMultiplier: 1
   - level: 3
     hitDamageAdd: 3
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
-    dotDamageAdd: 0
-    dotDamageMultiplier: 1
+    spawnDamageAdd: 0
+    spawnDamageMultiplier: 1
   - level: 4
     hitDamageAdd: 4
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
-    dotDamageAdd: 0
-    dotDamageMultiplier: 1
+    spawnDamageAdd: 0
+    spawnDamageMultiplier: 1
   - level: 5
     hitDamageAdd: 5
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
-    dotDamageAdd: 0
-    dotDamageMultiplier: 1
+    spawnDamageAdd: 0
+    spawnDamageMultiplier: 1
   - level: 6
     hitDamageAdd: 6
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
-    dotDamageAdd: 0
-    dotDamageMultiplier: 1
+    spawnDamageAdd: 0
+    spawnDamageMultiplier: 1
   - level: 7
     hitDamageAdd: 7
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
-    dotDamageAdd: 0
-    dotDamageMultiplier: 1
+    spawnDamageAdd: 0
+    spawnDamageMultiplier: 1
   - level: 8
     hitDamageAdd: 8
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
-    dotDamageAdd: 0
-    dotDamageMultiplier: 1
+    spawnDamageAdd: 0
+    spawnDamageMultiplier: 1
   - level: 9
     hitDamageAdd: 9
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
-    dotDamageAdd: 0
-    dotDamageMultiplier: 1
+    spawnDamageAdd: 0
+    spawnDamageMultiplier: 1
   - level: 10
     hitDamageAdd: 10
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
-    dotDamageAdd: 0
-    dotDamageMultiplier: 1
+    spawnDamageAdd: 0
+    spawnDamageMultiplier: 1

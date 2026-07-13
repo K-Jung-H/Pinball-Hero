@@ -6,6 +6,10 @@ public sealed class ClusterBallGrowthDefinitionSO : BallGrowthDefinitionSO
 {
     [SerializeField] private ClusterBallGrowthLevelData[] levels;
 
+    public override int LevelCount => GetLevelCount(levels);
+
+    public override int GetLevel(int index) => GetLevelAt(levels, index);
+
     public override bool ApplyLevel(int level, BallRuntimeStat runtimeStat)
     {
         if (runtimeStat == null || !TryGetLevelData(levels, level, out ClusterBallGrowthLevelData levelData))

@@ -1,9 +1,11 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public sealed class ExperienceBarUI : MonoBehaviour
 {
     [SerializeField] private Image fillImage;
+    [SerializeField] private TMP_Text levelText;
     [Min(0.01f)]
     [SerializeField] private float lerpSpeed = 8f;
 
@@ -61,6 +63,8 @@ public sealed class ExperienceBarUI : MonoBehaviour
             fillImage.fillAmount = targetFillAmount;
         }
 
+        RefreshLevelText();
+
         if (experienceSystem != null)
         {
             experienceSystem.ProgressChanged += OnProgressChanged;
@@ -78,6 +82,21 @@ public sealed class ExperienceBarUI : MonoBehaviour
 
         pendingLevelUpAnimations += resetAnimationCount;
         targetFillAmount = Mathf.Clamp01(normalizedProgress);
+        RefreshLevelText();
+    }
+
+    private void RefreshLevelText()
+    {
+        if (levelText == null)
+        {
+            return;
+        }
+
+        int level = experienceSystem != null
+            ? experienceSystem.StageLevel
+            : 0;
+
+        levelText.SetText("Lv.{0}", level);
     }
 
     private void OnDestroy()

@@ -12,6 +12,7 @@ public class StageBuilder : MonoBehaviour
     [SerializeField] private ExperienceBarUI experienceBarUI;
     [SerializeField] private WaveTextUI waveTextUI;
     [SerializeField] private StageResultController stageResultController;
+    [SerializeField] private StageRunController stageRunController;
     [SerializeField] private WaveSpawner waveSpawner;
     [SerializeField] private StageDefinitionSO stageDefinition;
     [SerializeField] private StageBallProgressSetSO stageBallProgressSet;
@@ -48,14 +49,10 @@ public class StageBuilder : MonoBehaviour
 
         ballShooter.SetCombatPipeline(combatPipeline);
         combatPipeline.SetBallShooter(ballShooter);
-        StageBallProgress[] stageBallProgresses = stageBallProgressSet != null
-            ? stageBallProgressSet.Progresses
-            : null;
 
         skillSelectionController.Initialize(skillCatalog, ballShooter);
         RunSkillInventory runSkillInventory = skillSelectionController.Inventory;
 
-        ballShooter.SetRuntimeData(stageBallProgresses, runSkillInventory);
         combatPipeline.SetRunSkillInventory(runSkillInventory);
 
         if (damageTextSystem != null)
@@ -102,19 +99,17 @@ public class StageBuilder : MonoBehaviour
             return;
         }
 
-        experienceBarUI.Bind(stageExperienceSystem);
+        if (stageRunController == null)
+        {
+            Debug.LogError("StageRunController is not assigned.");
+            return;
+        }
+
         waveTextUI.Bind(waveSpawner);
 
         if (!stageResultController.Initialize(playerController, waveSpawner))
         {
             Debug.LogError("StageResultController is not configured.");
-            return;
-        }
-
-        if (!stageExperienceSystem.Initialize(stageDefinition, skillSelectionController))
-        {
-            Debug.LogError("Stage experience data is not configured.");
-            experienceBarUI.Bind(null);
             return;
         }
 
@@ -127,8 +122,25 @@ public class StageBuilder : MonoBehaviour
             areaEffectSystem);
         waveSpawner.EnemyDefeated += deathEffectSystem.Process;
 
-        waveSpawner.SetAttackTarget(playerController.transform);
-        waveSpawner.StartStage(stageDefinition);
+        if (!stageRunController.Initialize(
+            playerController,
+            ballShooter,
+            combatPipeline,
+            damageTextSystem,
+            areaEffectSystem,
+            skillSelectionController,
+            stageExperienceSystem,
+            experienceBarUI,
+            stageResultController,
+            waveSpawner,
+            stageDefinition,
+            stageBallProgressSet))
+        {
+            Debug.LogError("StageRunController is not configured.");
+            return;
+        }
+
+        stageRunController.StartRun();
     }
 
     private void OnDestroy()

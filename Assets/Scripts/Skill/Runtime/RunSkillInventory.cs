@@ -15,6 +15,12 @@ public sealed class RunSkillInventory
     public int MaxActiveSkillCount => Mathf.Max(0, maxActiveSkillCount);
     public int MaxPassiveSkillCount => Mathf.Max(0, maxPassiveSkillCount);
 
+    public void Clear()
+    {
+        activeSkills.Clear();
+        passiveSkills.Clear();
+    }
+
     public int GetSkillLevel(SkillDefinitionSO definition)
     {
         if (definition == null)

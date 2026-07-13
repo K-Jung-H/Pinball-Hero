@@ -58,6 +58,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void ResetRun()
+    {
+        hpMax = Mathf.Max(1, hpMax);
+        hpCurrent = hpMax;
+
+        if (hpBar != null)
+        {
+            hpBar.Initialize(hpCurrent, hpMax);
+            hpBar.Show();
+        }
+    }
+
     private void Update()
     {
         UpdateAim();

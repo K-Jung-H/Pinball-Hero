@@ -111,7 +111,7 @@ public class BallFactory : MonoBehaviour
         {
             StageBallProgress progress = stageBallProgresses[i];
 
-            if (progress != null && progress.Unlocked && progress.BallType == type)
+            if (progress != null && progress.BallType == type)
             {
                 return progress.UpgradeLevel;
             }
