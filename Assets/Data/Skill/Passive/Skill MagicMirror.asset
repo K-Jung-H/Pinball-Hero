@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9fb4f298d7e45bd950d366c1e149fd1, type: 3}
+  m_Name: Skill MagicMirror
+  m_EditorClassIdentifier: Assembly-CSharp::WallHitDamagePassiveDefinitionSO
+  skillId: magic_mirror
+  displayName: "\uB9C8\uBC95 \uAC70\uC6B8"
+  icon: {fileID: -6616691536047042522, guid: a2f6002f7687d6242b0a6c681dedff59, type: 3}
+  maxLevel: 3
+  descriptionFormat: "\uBCFC\uC774 \uBCBD\uC744 \uCE60 \uB54C\uB9C8\uB2E4 \uB2E4\uC74C
+    \uD0C0\uACA9 \uD53C\uD574\uB7C9 {damageMultiplier}({damageMultiplierDelta})%
+    \uC99D\uAC00."
+  levels:
+  - level: 1
+    damageBonusRatioPerWall: 0.2
+  - level: 2
+    damageBonusRatioPerWall: 0.4
+  - level: 3
+    damageBonusRatioPerWall: 0.6

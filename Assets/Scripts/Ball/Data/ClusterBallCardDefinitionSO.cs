@@ -20,7 +20,7 @@ public sealed class ClusterBallCardDefinitionSO : BallCardDefinitionSO
 
         if (cluster != null)
         {
-            cluster.ApplyLevel(levelData.SpawnChance, levelData.SpawnDamage, levelData.SpawnedBallType);
+            cluster.SetCardLevel(levelData.SpawnChance, levelData.SpawnDamage, levelData.SpawnedBallType);
         }
 
         return true;

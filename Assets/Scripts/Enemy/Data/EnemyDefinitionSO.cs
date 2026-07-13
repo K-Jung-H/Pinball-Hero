@@ -16,4 +16,6 @@ public class EnemyDefinitionSO : ScriptableObject
     public float Speed => moveSpeed;
     public int CellWidth => cellWidth;
     public int CellHeight => cellHeight;
+    public int CellArea => Mathf.Max(0, cellWidth) * Mathf.Max(0, cellHeight);
+    public int ExperienceReward => CellArea;
 }

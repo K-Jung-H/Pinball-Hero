@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyHpBar : MonoBehaviour
+public sealed class SpriteHpBar : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer backgroundSprite;
     [SerializeField] private SpriteRenderer fillSprite;
@@ -16,11 +16,10 @@ public class EnemyHpBar : MonoBehaviour
         CacheInitialFillTransform();
     }
 
-    public void Initialize()
+    public void Initialize(int currentHp, int maxHp)
     {
         CacheInitialFillTransform();
-        SetRatio(1f);
-        Hide();
+        SetHp(currentHp, maxHp);
     }
 
     public void SetHp(int currentHp, int maxHp)
@@ -30,7 +29,6 @@ public class EnemyHpBar : MonoBehaviour
             return;
         }
 
-        Show();
         SetRatio((float)currentHp / maxHp);
     }
 
@@ -48,20 +46,22 @@ public class EnemyHpBar : MonoBehaviour
     {
         CacheInitialFillTransform();
 
-        float ratio = Mathf.Clamp01(value);
-
-        if (fillTransform != null)
+        if (fillSprite == null)
         {
-            Vector2 size = fillFullSize;
-            size.x = fillFullSize.x * ratio;
-            fillSprite.size = size;
-
-            Vector3 position = fillFullLocalPosition;
-            position.x = fillFullLocalPosition.x - fillFullSize.x * (1f - ratio) * 0.5f;
-            fillTransform.localPosition = position;
+            return;
         }
 
-        if (fillSprite != null && fillColorByHpRatio != null)
+        float ratio = Mathf.Clamp01(value);
+        Vector2 size = fillFullSize;
+        size.x = fillFullSize.x * ratio;
+        fillSprite.size = size;
+
+        Vector3 position = fillFullLocalPosition;
+        position.x = fillFullLocalPosition.x
+            - fillFullSize.x * (1f - ratio) * 0.5f;
+        fillTransform.localPosition = position;
+
+        if (fillColorByHpRatio != null)
         {
             fillSprite.color = fillColorByHpRatio.Evaluate(ratio);
         }
@@ -82,11 +82,9 @@ public class EnemyHpBar : MonoBehaviour
 
     private void SetVisible(bool value)
     {
-        if (gameObject.activeSelf == value)
+        if (gameObject.activeSelf != value)
         {
-            return;
+            gameObject.SetActive(value);
         }
-
-        gameObject.SetActive(value);
     }
 }

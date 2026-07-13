@@ -14,8 +14,10 @@ public class Enemy_Base : MonoBehaviour
 
     [SerializeField] private int hpMax;
     [SerializeField] private int hpCurrent;
-    [SerializeField] private EnemyHpBar hpBar;
+    [SerializeField] private SpriteHpBar hpBar;
     [SerializeField] private Collider2D bodyCollider;
+    [SerializeField] private Collider2D hitTriggerCollider;
+    [SerializeField] private StatusController statusController;
 
     private int damage;
     private float speed;
@@ -24,8 +26,14 @@ public class Enemy_Base : MonoBehaviour
 
     public int Damage => damage;
     public bool IsDead => state == EnemyState.Dead;
+    public bool CanReceiveDamage => state == EnemyState.Moving;
     public EnemyState State => state;
     public Transform AttackTarget => attackTarget;
+    public StatusController StatusController => statusController;
+    public Collider2D BodyCollider => bodyCollider;
+    public Vector2 Center => hitTriggerCollider != null
+        ? hitTriggerCollider.transform.TransformPoint(hitTriggerCollider.offset)
+        : transform.position;
 
     public event Action<Enemy_Base> EnemyDamaged;
     public event Action<Enemy_Base> EnemyDied;
@@ -55,7 +63,11 @@ public class Enemy_Base : MonoBehaviour
             return;
         }
         
-        transform.position += Vector3.down * speed * Time.deltaTime;
+        float moveSpeedMultiplier = statusController != null
+            ? statusController.MoveSpeedMultiplier
+            : 1f;
+
+        transform.position += Vector3.down * (speed * moveSpeedMultiplier) * Time.deltaTime;
     }
 
     public void Initialize(EnemyDefinitionSO enemyDefinition)
@@ -71,20 +83,56 @@ public class Enemy_Base : MonoBehaviour
         hpCurrent = hpMax;
         state = EnemyState.Moving;
 
-        if (bodyCollider != null)
+        SetCollidersEnabled(true);
+
+        if (statusController != null)
         {
-            bodyCollider.enabled = true;
+            statusController.Initialize(this);
         }
 
         if (hpBar != null)
         {
-            hpBar.Initialize();
+            hpBar.Initialize(hpCurrent, hpMax);
+            hpBar.Hide();
         }
     }
 
     public void SetAttackTarget(Transform target)
     {
         attackTarget = target;
+    }
+
+    public EnemyHitSide GetHitSide(Vector2 hitPoint)
+    {
+        Collider2D referenceCollider = hitTriggerCollider != null
+            ? hitTriggerCollider
+            : bodyCollider;
+
+        if (referenceCollider == null)
+        {
+            return EnemyHitSide.None;
+        }
+
+        Bounds bounds = referenceCollider.bounds;
+        Vector2 offset = hitPoint - (Vector2)bounds.center;
+
+        if (offset.sqrMagnitude <= 0.0001f)
+        {
+            return EnemyHitSide.None;
+        }
+
+        Vector2 extents = bounds.extents;
+        float normalizedX = Mathf.Abs(offset.x) / Mathf.Max(0.0001f, extents.x);
+        float normalizedY = Mathf.Abs(offset.y) / Mathf.Max(0.0001f, extents.y);
+
+        if (normalizedY < normalizedX)
+        {
+            return EnemyHitSide.None;
+        }
+
+        return offset.y < 0f
+            ? EnemyHitSide.Front
+            : EnemyHitSide.Rear;
     }
 
     public void TakeDamage(int value)
@@ -106,6 +154,7 @@ public class Enemy_Base : MonoBehaviour
         if (hpBar != null)
         {
             hpBar.SetHp(hpCurrent, hpMax);
+            hpBar.Show();
         }
 
         HpChanged?.Invoke(this, hpCurrent, hpMax);
@@ -128,10 +177,8 @@ public class Enemy_Base : MonoBehaviour
 
         state = EnemyState.Attacking;
 
-        if (bodyCollider != null)
-        {
-            bodyCollider.enabled = false;
-        }
+        SetCollidersEnabled(false);
+        statusController?.ResetState();
 
         if (hpBar != null)
         {
@@ -157,6 +204,7 @@ public class Enemy_Base : MonoBehaviour
 
     public void Despawn()
     {
+        statusController?.ResetState();
         gameObject.SetActive(false);
     }
 
@@ -170,10 +218,8 @@ public class Enemy_Base : MonoBehaviour
         Debug.Log("Enemy Dead!");
         state = EnemyState.Dead;
 
-        if (bodyCollider != null)
-        {
-            bodyCollider.enabled = false;
-        }
+        SetCollidersEnabled(false);
+        statusController?.ResetState();
 
         if (hpBar != null)
         {
@@ -181,6 +227,19 @@ public class Enemy_Base : MonoBehaviour
         }
 
         EnemyDied?.Invoke(this);
+    }
+
+    private void SetCollidersEnabled(bool value)
+    {
+        if (bodyCollider != null)
+        {
+            bodyCollider.enabled = value;
+        }
+
+        if (hitTriggerCollider != null)
+        {
+            hitTriggerCollider.enabled = value;
+        }
     }
 
     private static void InitializeLayer()

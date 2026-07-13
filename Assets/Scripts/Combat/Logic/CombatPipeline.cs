@@ -4,12 +4,30 @@ using UnityEngine;
 public class CombatPipeline : MonoBehaviour
 {
     private readonly PassiveModifierSystem passiveModifierSystem = new PassiveModifierSystem();
+    private HitEffectSystem hitEffectSystem;
 
     public event Action<DamageResult> HitResolved;
+
+    private void Awake()
+    {
+        EnsureHitEffectSystem();
+    }
 
     public void SetRunSkillInventory(RunSkillInventory inventory)
     {
         passiveModifierSystem.SetRunSkillInventory(inventory);
+    }
+
+    public void SetAreaEffectSystem(AreaEffectSystem areaEffectSystem)
+    {
+        EnsureHitEffectSystem();
+        hitEffectSystem.SetAreaEffectSystem(areaEffectSystem);
+    }
+
+    public void SetBallShooter(BallShooter ballShooter)
+    {
+        EnsureHitEffectSystem();
+        hitEffectSystem.SetBallShooter(ballShooter);
     }
 
     public void RegisterBall(Ball_Base ball)
@@ -40,30 +58,92 @@ public class CombatPipeline : MonoBehaviour
             return;
         }
 
-        BallHitContext context = new BallHitContext(ball, enemy, hitPoint);
+        int wallHitCount = ball.ConsumeWallHitCount();
+        BallHitContext context = new BallHitContext(
+            ball,
+            enemy,
+            hitPoint,
+            wallHitCount);
         DamageRequest request = DamageRequest.CreateDirectHit(context);
-        DamageResult result = passiveModifierSystem.Apply(request);
+        DamageResult result = ResolveDamage(request);
 
         if (result.Damage > 0)
         {
-            enemy.TakeDamage(result.Damage);
-            HitResolved?.Invoke(result);
+            EnsureHitEffectSystem();
+            hitEffectSystem.Execute(context);
         }
+    }
+
+    private void EnsureHitEffectSystem()
+    {
+        if (hitEffectSystem == null)
+        {
+            hitEffectSystem = new HitEffectSystem(this);
+        }
+    }
+
+    public DamageResult ResolveDamage(DamageRequest request)
+    {
+        Enemy_Base enemy = request.Enemy;
+
+        if (enemy == null || !enemy.CanReceiveDamage)
+        {
+            return default;
+        }
+
+        DamageResult result = passiveModifierSystem.Apply(request);
+        float incomingDamageMultiplier = enemy.StatusController != null
+            ? enemy.StatusController.IncomingDamageMultiplier
+            : 1f;
+
+        int finalDamage = Mathf.Max(0, Mathf.RoundToInt(result.Damage * incomingDamageMultiplier));
+
+        if (finalDamage <= 0)
+        {
+            return default;
+        }
+
+        result = new DamageResult(
+            finalDamage,
+            result.DamageType,
+            result.SourceType,
+            result.IsCritical,
+            result.IsDot,
+            result.HitPoint,
+            result.Ball,
+            result.Enemy);
+
+        enemy.TakeDamage(finalDamage);
+        HitResolved?.Invoke(result);
+
+        return result;
     }
 }
 
 public readonly struct BallHitContext
 {
-    public BallHitContext(Ball_Base ball, Enemy_Base enemy, Vector2 hitPoint)
+    public BallHitContext(
+        Ball_Base ball,
+        Enemy_Base enemy,
+        Vector2 hitPoint,
+        int wallHitCount)
     {
         Ball = ball;
         Enemy = enemy;
         HitPoint = hitPoint;
+        TargetCenter = enemy != null ? enemy.Center : hitPoint;
+        HitSide = enemy != null
+            ? enemy.GetHitSide(hitPoint)
+            : EnemyHitSide.None;
+        WallHitCount = Mathf.Max(0, wallHitCount);
     }
 
     public Ball_Base Ball { get; }
     public Enemy_Base Enemy { get; }
     public Vector2 HitPoint { get; }
+    public Vector2 TargetCenter { get; }
+    public EnemyHitSide HitSide { get; }
+    public int WallHitCount { get; }
     public BallType BallType => Ball != null ? Ball.BallType : BallType.None;
 }
 
@@ -79,7 +159,9 @@ public readonly struct DamageRequest
         Vector2 hitPoint,
         BallRuntimeStat runtimeStat,
         Ball_Base ball,
-        Enemy_Base enemy)
+        Enemy_Base enemy,
+        EnemyHitSide hitSide = EnemyHitSide.None,
+        int wallHitCount = 0)
     {
         BaseDamage = baseDamage;
         BallType = ballType;
@@ -91,6 +173,8 @@ public readonly struct DamageRequest
         RuntimeStat = runtimeStat;
         Ball = ball;
         Enemy = enemy;
+        HitSide = hitSide;
+        WallHitCount = Mathf.Max(0, wallHitCount);
     }
 
     public int BaseDamage { get; }
@@ -103,6 +187,8 @@ public readonly struct DamageRequest
     public BallRuntimeStat RuntimeStat { get; }
     public Ball_Base Ball { get; }
     public Enemy_Base Enemy { get; }
+    public EnemyHitSide HitSide { get; }
+    public int WallHitCount { get; }
 
     public static DamageRequest CreateDirectHit(BallHitContext context)
     {
@@ -120,7 +206,9 @@ public readonly struct DamageRequest
             context.HitPoint,
             runtimeStat,
             context.Ball,
-            context.Enemy);
+            context.Enemy,
+            context.HitSide,
+            context.WallHitCount);
     }
 }
 
@@ -168,16 +256,11 @@ public sealed class PassiveModifierSystem
     public DamageResult Apply(DamageRequest request)
     {
         int damage = Mathf.Max(0, request.BaseDamage);
+        float damageBonusRatio = 0f;
+        float critChance = request.RuntimeStat != null
+            ? request.RuntimeStat.CritChance
+            : 0f;
         bool isCritical = false;
-
-        if (request.CanCrit && request.RuntimeStat != null && request.RuntimeStat.CritChance > 0f)
-        {
-            if (UnityEngine.Random.value <= request.RuntimeStat.CritChance)
-            {
-                damage = Mathf.RoundToInt(damage * request.RuntimeStat.CritDamageMultiplier);
-                isCritical = true;
-            }
-        }
 
         if (runSkillInventory != null)
         {
@@ -194,18 +277,27 @@ public sealed class PassiveModifierSystem
                     continue;
                 }
 
-                if (!passiveDefinition.TryGetLevelData(state.Level, out PassiveSkillLevelData levelData))
-                {
-                    continue;
-                }
+                damageBonusRatio += Mathf.Max(
+                    0f,
+                    passiveDefinition.GetDamageBonusRatio(state.Level, request));
 
-                if (!levelData.Matches(request))
-                {
-                    continue;
-                }
-
-                damage = Mathf.Max(0, Mathf.RoundToInt((damage + levelData.DamageAdd) * levelData.DamageMultiplier));
+                critChance += Mathf.Max(
+                    0f,
+                    passiveDefinition.GetCritChanceBonus(state.Level, request));
             }
+        }
+
+        damage = Mathf.Max(
+            0,
+            Mathf.RoundToInt(damage * (1f + damageBonusRatio)));
+
+        if (request.CanCrit
+            && request.RuntimeStat != null
+            && UnityEngine.Random.value < Mathf.Clamp01(critChance))
+        {
+            damage = Mathf.RoundToInt(
+                damage * request.RuntimeStat.CritDamageMultiplier);
+            isCritical = true;
         }
 
         return new DamageResult(

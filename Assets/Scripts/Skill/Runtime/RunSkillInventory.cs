@@ -46,6 +46,32 @@ public sealed class RunSkillInventory
         return passiveSkills[index];
     }
 
+    public bool TryGetPassive<T>(out T definition, out int level)
+        where T : PassiveSkillDefinitionSO
+    {
+        definition = null;
+        level = 0;
+
+        for (int i = 0; i < passiveSkills.Count; i++)
+        {
+            RunSkillState state = passiveSkills[i];
+            T passiveDefinition = state != null
+                ? state.Definition as T
+                : null;
+
+            if (passiveDefinition == null)
+            {
+                continue;
+            }
+
+            definition = passiveDefinition;
+            level = state.Level;
+            return true;
+        }
+
+        return false;
+    }
+
     public int GetActiveSkillLevelForBall(BallType ballType)
     {
         if (TryGetActiveBallSkill(ballType, out _, out int level))

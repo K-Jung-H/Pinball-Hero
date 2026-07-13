@@ -9,21 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b2d1e0f6c3a4e2d9b7a5f4c3d2e1012, type: 3}
+  m_Script: {fileID: 11500000, guid: 41f84889c2ef434e8bb48ae20585e1a2, type: 3}
   m_Name: Skill WarmTinHeart
-  m_EditorClassIdentifier: Assembly-CSharp::PassiveSkillDefinitionSO
+  m_EditorClassIdentifier: Assembly-CSharp::BallDamagePassiveDefinitionSO
   skillId: warm_tin_heart
-  displayName: 따뜻한 양철 심장
-  icon: {fileID: 0}
-  maxLevel: 1
-  descriptionFormat: 모든 노멀 볼 피해량 {damageMultiplier}({damageMultiplierDelta})% 증가.
+  displayName: "\uB530\uB73B\uD55C \uC591\uCCA0 \uC2EC\uC7A5"
+  icon: {fileID: -2705430156882675895, guid: 2425badcec20bb34b9f22de578f3ae35, type: 3}
+  maxLevel: 3
+  descriptionFormat: "\ubaa8\ub4e0 \ub178\uba40 \ubcfc \ud53c\ud574\ub7c9 {damageMultiplier}({damageMultiplierDelta})% \uc99d\uac00."
+  targetBallType: 1
+  targetSourceType: 0
   levels:
   - level: 1
-    filterBallType: 1
-    targetBallType: 1
-    filterDamageType: 0
-    targetDamageType: 0
-    filterSourceType: 0
-    targetSourceType: 0
-    damageAdd: 0
-    damageMultiplier: 1.2
+    damageBonusRatio: 0.2
+  - level: 2
+    damageBonusRatio: 0.3
+  - level: 3
+    damageBonusRatio: 0.4

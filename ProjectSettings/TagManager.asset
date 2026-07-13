@@ -8,15 +8,15 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - GameSystem
+  - Wall
   - Water
   - UI
-  - Wall
-  - Ball
-  - Enemy
+  - Ball Bounce
+  - Ball Pierce
+  - Enemy Trigger
+  - Enemy Solid
   - Endline
   - Shooter
-  - 
   - 
   - 
   - 

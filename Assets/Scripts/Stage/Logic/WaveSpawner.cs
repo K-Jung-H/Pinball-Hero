@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,8 +18,22 @@ public class WaveSpawner : MonoBehaviour
     private int initialSpawnRows;
     private int currentWaveIndex;
     private int nextSpawnLine;
+    private int pendingAttackCount;
     private float spawnTimer;
     private bool isRunning;
+    private bool hasFinishedAllWaves;
+    private bool hasRaisedStageCompleted;
+
+    public Vector2 CellSize => cellSize;
+    public Bounds BoardBounds => spawnAreaCollider != null
+        ? spawnAreaCollider.bounds
+        : default;
+
+    public event Action<Enemy_Base> EnemyDefeated;
+    public event Action<int> ExperienceGained;
+    public event Action<int> PlayerDamageRequested;
+    public event Action<int> WaveStarted;
+    public event Action StageCompleted;
 
     public void SetAttackTarget(Transform target)
     {
@@ -50,6 +65,9 @@ public class WaveSpawner : MonoBehaviour
         stageDefinition = definition;
         initialSpawnRows = Mathf.Max(0, stageDefinition.InitialSpawnRows);
         currentWaveIndex = 0;
+        pendingAttackCount = 0;
+        hasFinishedAllWaves = false;
+        hasRaisedStageCompleted = false;
         StartWave(stageDefinition.Waves[currentWaveIndex]);
     }
 
@@ -79,6 +97,7 @@ public class WaveSpawner : MonoBehaviour
         isRunning = true;
 
         Debug.Log($"Wave Start: {currentWaveIndex + 1}/{stageDefinition.Waves.Length} ({waveDefinition.name})");
+        WaveStarted?.Invoke(currentWaveIndex + 1);
 
         SpawnLines(0, nextSpawnLine - 1, nextSpawnLine - 1);
     }
@@ -183,6 +202,7 @@ public class WaveSpawner : MonoBehaviour
         enemy.SetAttackTarget(attackTarget);
         enemy.EnemyDied += OnEnemyDied;
         enemy.EndlineReached += OnEnemyEndlineReached;
+        enemy.EnemyAttackCompleted += OnEnemyAttackCompleted;
         activeEnemies.Add(new SpawnedEnemyState(enemy, enemyDefinition));
 
         return true;
@@ -190,17 +210,45 @@ public class WaveSpawner : MonoBehaviour
 
     private void OnEnemyDied(Enemy_Base enemy)
     {
+        EnemyDefinitionSO enemyDefinition = FindEnemyDefinition(enemy);
+
         if (enemy != null)
         {
             enemy.EnemyDied -= OnEnemyDied;
             enemy.EndlineReached -= OnEnemyEndlineReached;
+            enemy.EnemyAttackCompleted -= OnEnemyAttackCompleted;
+        }
+
+        EnemyDefeated?.Invoke(enemy);
+
+        if (enemyDefinition != null && enemyDefinition.ExperienceReward > 0)
+        {
+            ExperienceGained?.Invoke(enemyDefinition.ExperienceReward);
         }
 
         RemoveActiveEnemy(enemy);
     }
 
+    private void OnEnemyAttackCompleted(Enemy_Base enemy, int damage)
+    {
+        if (enemy != null)
+        {
+            enemy.EnemyAttackCompleted -= OnEnemyAttackCompleted;
+        }
+
+        if (damage > 0)
+        {
+            PlayerDamageRequested?.Invoke(damage);
+        }
+
+        pendingAttackCount = Mathf.Max(0, pendingAttackCount - 1);
+        TryCompleteStage();
+    }
+
     private void OnEnemyEndlineReached(Enemy_Base enemy)
     {
+        pendingAttackCount++;
+
         if (enemy != null)
         {
             enemy.EnemyDied -= OnEnemyDied;
@@ -260,6 +308,21 @@ public class WaveSpawner : MonoBehaviour
         }
     }
 
+    private EnemyDefinitionSO FindEnemyDefinition(Enemy_Base enemy)
+    {
+        for (int i = activeEnemies.Count - 1; i >= 0; i--)
+        {
+            SpawnedEnemyState state = activeEnemies[i];
+
+            if (state.Enemy == enemy)
+            {
+                return state.Definition;
+            }
+        }
+
+        return null;
+    }
+
     private static bool IsRangeOverlapping(int firstStart, int firstEnd, int secondStart, int secondEnd)
     {
         return firstStart <= secondEnd && secondStart <= firstEnd;
@@ -304,10 +367,25 @@ public class WaveSpawner : MonoBehaviour
         {
             isRunning = false;
             waveDefinition = null;
+            hasFinishedAllWaves = true;
+            TryCompleteStage();
             return;
         }
 
         StartWave(stageDefinition.Waves[currentWaveIndex]);
+    }
+
+    private void TryCompleteStage()
+    {
+        if (!hasFinishedAllWaves
+            || pendingAttackCount > 0
+            || hasRaisedStageCompleted)
+        {
+            return;
+        }
+
+        hasRaisedStageCompleted = true;
+        StageCompleted?.Invoke();
     }
 
     private class SpawnedEnemyState

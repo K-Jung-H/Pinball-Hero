@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8466286937300286324}
   - component: {fileID: 5516757277634250523}
+  - component: {fileID: 9123456789012345002}
   - component: {fileID: -3765418520961455695}
   - component: {fileID: 131858967200871941}
   - component: {fileID: -4000042950655888499}
@@ -36,6 +37,7 @@ Transform:
   - {fileID: 4237992771882158846}
   - {fileID: 2821814392317714276}
   - {fileID: 7918642199774281526}
+  - {fileID: 2959398785935459880}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5516757277634250523
@@ -48,12 +50,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 77e272b890385c64fb44eb6d3475f2b5, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy_Base
-  hpMax: 30
+  hpMax: 100
   hpCurrent: 0
   hpBar: {fileID: 3402872117589639984}
-  bodyCollider: {fileID: 131858967200871941}
+  bodyCollider: {fileID: 4820713592019240882}
+  hitTriggerCollider: {fileID: 131858967200871941}
+  statusController: {fileID: 9123456789012345002}
+--- !u!114 &9123456789012345002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 39710620535278399}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6e39bc9488b4bd49a635326ec128a07, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::StatusController
 --- !u!114 &-3765418520961455695
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67,12 +83,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimator
   enemy: {fileID: 5516757277634250523}
+  statusController: {fileID: 9123456789012345002}
   animator: {fileID: -4000042950655888499}
   bodyTransform: {fileID: 2821814392317714276}
   blockSprite: {fileID: 107385797457068293}
   idleStateName: Idle
-  hitTriggerName: Hit
-  deathTriggerName: Death
+  hitStateName: Hit
+  deathStateName: Death
   attackDuration: 0.35
 --- !u!61 &131858967200871941
 BoxCollider2D:
@@ -104,7 +121,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -460,7 +477,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c13f73ebefd35f44cb5f7d15741393b3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHpBar
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteHpBar
   backgroundSprite: {fileID: 3212335748768886570}
   fillSprite: {fileID: 8143191189877363005}
   fillColorByHpRatio:
@@ -493,6 +510,84 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
+--- !u!1 &7602214062822683332
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2959398785935459880}
+  - component: {fileID: 4820713592019240882}
+  m_Layer: 9
+  m_Name: SolidCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2959398785935459880
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7602214062822683332}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8466286937300286324}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &4820713592019240882
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7602214062822683332}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 4, y: 2}
+  m_EdgeRadius: 0
 --- !u!1 &7848334125736288507
 GameObject:
   m_ObjectHideFlags: 0

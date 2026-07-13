@@ -71,6 +71,11 @@ public sealed class BallRuntimeStat
         HitDamage = Mathf.Max(0, Mathf.RoundToInt((HitDamage + add) * safeMultiplier));
     }
 
+    public void SetHitDamage(int value)
+    {
+        HitDamage = Mathf.Max(0, value);
+    }
+
     public void ApplyMoveSpeedMultiplier(float multiplier)
     {
         float safeMultiplier = multiplier <= 0f ? 1f : multiplier;
@@ -154,11 +159,17 @@ public sealed class BurnEffectRuntimeStat : BallEffectRuntimeStat
         MaxStack = burn != null ? Mathf.Max(0, burn.BaseMaxStack) : 0;
     }
 
-    public void ApplyLevel(int dotDamage, float duration, int maxStack)
+    public void SetCardLevel(int dotDamage, float duration, int maxStack)
     {
         DotDamage = Mathf.Max(0, dotDamage);
         Duration = Mathf.Max(0f, duration);
         MaxStack = Mathf.Max(0, maxStack);
+    }
+
+    public void ApplyGrowth(int damageAdd, float damageMultiplier)
+    {
+        float safeMultiplier = damageMultiplier <= 0f ? 1f : damageMultiplier;
+        DotDamage = Mathf.Max(0, Mathf.RoundToInt((DotDamage + damageAdd) * safeMultiplier));
     }
 }
 
@@ -184,12 +195,18 @@ public sealed class FreezeEffectRuntimeStat : BallEffectRuntimeStat
         ExtraDamageRatio = freeze != null ? Mathf.Max(0f, freeze.BaseExtraDamageRatio) : 0f;
     }
 
-    public void ApplyLevel(float chance, float duration, float slowRatio, float extraDamageRatio)
+    public void SetCardLevel(float chance, float duration, float slowRatio, float extraDamageRatio)
     {
         Chance = Mathf.Clamp01(chance);
         Duration = Mathf.Max(0f, duration);
         SlowRatio = Mathf.Max(0f, slowRatio);
         ExtraDamageRatio = Mathf.Max(0f, extraDamageRatio);
+    }
+
+    public void ApplyGrowth(float extraDamageRatioAdd, float extraDamageRatioMultiplier)
+    {
+        float safeMultiplier = extraDamageRatioMultiplier <= 0f ? 1f : extraDamageRatioMultiplier;
+        ExtraDamageRatio = Mathf.Max(0f, (ExtraDamageRatio + extraDamageRatioAdd) * safeMultiplier);
     }
 }
 
@@ -201,16 +218,26 @@ public sealed class LaserEffectRuntimeStat : BallEffectRuntimeStat
     }
 
     public int RowDamage { get; private set; }
+    public DamageArea AreaPrefab { get; private set; }
+    public int RowHeightInCells { get; private set; }
 
     public override void ResetFrom(BallEffectDefinitionSO definition)
     {
         LaserEffectDefinitionSO laser = definition as LaserEffectDefinitionSO;
         RowDamage = laser != null ? Mathf.Max(0, laser.BaseRowDamage) : 0;
+        AreaPrefab = laser != null ? laser.AreaPrefab : null;
+        RowHeightInCells = laser != null ? Mathf.Max(1, laser.RowHeightInCells) : 1;
     }
 
-    public void ApplyLevel(int rowDamage)
+    public void SetCardLevel(int rowDamage)
     {
         RowDamage = Mathf.Max(0, rowDamage);
+    }
+
+    public void ApplyGrowth(int damageAdd, float damageMultiplier)
+    {
+        float safeMultiplier = damageMultiplier <= 0f ? 1f : damageMultiplier;
+        RowDamage = Mathf.Max(0, Mathf.RoundToInt((RowDamage + damageAdd) * safeMultiplier));
     }
 }
 
@@ -236,6 +263,8 @@ public sealed class ClusterEffectRuntimeStat : BallEffectRuntimeStat
     public float SpawnChance { get; private set; }
     public int SpawnDamage { get; private set; }
     public BallType SpawnedBallType { get; private set; }
+    public float MinNoiseAngle { get; private set; }
+    public float MaxNoiseAngle { get; private set; }
 
     public override void ResetFrom(BallEffectDefinitionSO definition)
     {
@@ -244,12 +273,22 @@ public sealed class ClusterEffectRuntimeStat : BallEffectRuntimeStat
         SpawnChance = cluster != null ? Mathf.Clamp01(cluster.BaseSpawnChance) : 0f;
         SpawnDamage = cluster != null ? Mathf.Max(0, cluster.BaseSpawnDamage) : 0;
         SpawnedBallType = cluster != null ? cluster.SpawnedBallType : BallType.None;
+        MaxNoiseAngle = cluster != null ? Mathf.Clamp(cluster.MaxNoiseAngle, 0f, 89f) : 0f;
+        MinNoiseAngle = cluster != null
+            ? Mathf.Clamp(cluster.MinNoiseAngle, 0f, MaxNoiseAngle)
+            : 0f;
     }
 
-    public void ApplyLevel(float spawnChance, int spawnDamage, BallType spawnedBallType)
+    public void SetCardLevel(float spawnChance, int spawnDamage, BallType spawnedBallType)
     {
         SpawnChance = Mathf.Clamp01(spawnChance);
         SpawnDamage = Mathf.Max(0, spawnDamage);
         SpawnedBallType = spawnedBallType;
+    }
+
+    public void ApplyGrowth(int damageAdd, float damageMultiplier)
+    {
+        float safeMultiplier = damageMultiplier <= 0f ? 1f : damageMultiplier;
+        SpawnDamage = Mathf.Max(0, Mathf.RoundToInt((SpawnDamage + damageAdd) * safeMultiplier));
     }
 }

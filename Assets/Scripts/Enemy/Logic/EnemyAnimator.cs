@@ -2,17 +2,28 @@ using UnityEngine;
 
 public class EnemyAnimator : MonoBehaviour
 {
+    private const string BaseLayerPrefix = "Base Layer.";
+    private const string VisualStatusParameterName = "VisualStatus";
+
+    [Header("References")]
     [SerializeField] private Enemy_Base enemy;
+    [SerializeField] private StatusController statusController;
     [SerializeField] private Animator animator;
     [SerializeField] private Transform bodyTransform;
     [SerializeField] private SpriteRenderer blockSprite;
+
+    [Header("Animation State Names")]
     [SerializeField] private string idleStateName = "Idle";
-    [SerializeField] private string hitTriggerName = "Hit";
-    [SerializeField] private string deathTriggerName = "Death";
+    [SerializeField] private string hitStateName = "Hit";
+    [SerializeField] private string deathStateName = "Death";
+
+    [Header("Attack Motion")]
     [SerializeField] private float attackDuration = 0.35f;
 
-    private int hitTriggerHash;
-    private int deathTriggerHash;
+    private int visualStatusHash;
+    private int idleStateHash;
+    private int hitStateHash;
+    private int deathStateHash;
     private bool isAttackPlaying;
     private float attackElapsed;
     private Vector3 bodyStartPosition;
@@ -31,8 +42,10 @@ public class EnemyAnimator : MonoBehaviour
             blockDefaultColor = blockSprite.color;
         }
 
-        hitTriggerHash = Animator.StringToHash(hitTriggerName);
-        deathTriggerHash = Animator.StringToHash(deathTriggerName);
+        visualStatusHash = Animator.StringToHash(VisualStatusParameterName);
+        idleStateHash = GetStateHash(idleStateName);
+        hitStateHash = GetStateHash(hitStateName);
+        deathStateHash = GetStateHash(deathStateName);
     }
 
     private void OnEnable()
@@ -46,18 +59,27 @@ public class EnemyAnimator : MonoBehaviour
         enemy.EnemyDamaged += OnEnemyDamaged;
         enemy.EndlineReached += OnEndlineReached;
         enemy.EnemyDied += OnEnemyDied;
+
+        if (statusController != null)
+        {
+            statusController.VisualStatusChanged += OnVisualStatusChanged;
+            OnVisualStatusChanged(statusController.VisualStatus);
+        }
     }
 
     private void OnDisable()
     {
-        if (enemy == null)
+        if (enemy != null)
         {
-            return;
+            enemy.EnemyDamaged -= OnEnemyDamaged;
+            enemy.EndlineReached -= OnEndlineReached;
+            enemy.EnemyDied -= OnEnemyDied;
         }
 
-        enemy.EnemyDamaged -= OnEnemyDamaged;
-        enemy.EndlineReached -= OnEndlineReached;
-        enemy.EnemyDied -= OnEnemyDied;
+        if (statusController != null)
+        {
+            statusController.VisualStatusChanged -= OnVisualStatusChanged;
+        }
     }
 
     private void Update()
@@ -96,7 +118,7 @@ public class EnemyAnimator : MonoBehaviour
 
     private void OnEnemyDamaged(Enemy_Base target)
     {
-        SetTrigger(hitTriggerName, hitTriggerHash);
+        PlayState(hitStateHash);
     }
 
     private void OnEndlineReached(Enemy_Base target)
@@ -106,17 +128,17 @@ public class EnemyAnimator : MonoBehaviour
 
     private void OnEnemyDied(Enemy_Base target)
     {
-        SetTrigger(deathTriggerName, deathTriggerHash);
+        PlayState(deathStateHash);
     }
 
-    private void SetTrigger(string triggerName, int triggerHash)
+    private void OnVisualStatusChanged(EnemyVisualStatus visualStatus)
     {
-        if (animator == null || string.IsNullOrEmpty(triggerName))
+        if (animator == null)
         {
             return;
         }
 
-        animator.SetTrigger(triggerHash);
+        animator.SetInteger(visualStatusHash, (int)visualStatus);
     }
 
     private void StartAttackMotion(Enemy_Base target)
@@ -128,11 +150,8 @@ public class EnemyAnimator : MonoBehaviour
 
         if (animator != null)
         {
-            if (!string.IsNullOrEmpty(idleStateName))
-            {
-                animator.Play(idleStateName, 0, 0f);
-                animator.Update(0f);
-            }
+            PlayState(idleStateHash);
+            animator.Update(0f);
 
             animator.enabled = false;
         }
@@ -173,12 +192,10 @@ public class EnemyAnimator : MonoBehaviour
         }
 
         animator.enabled = true;
+        animator.SetInteger(visualStatusHash, (int)EnemyVisualStatus.Idle);
 
-        if (!string.IsNullOrEmpty(idleStateName))
-        {
-            animator.Play(idleStateName, 0, 0f);
-            animator.Update(0f);
-        }
+        PlayState(idleStateHash);
+        animator.Update(0f);
     }
 
     private void SetBlockAlpha(float value)
@@ -191,5 +208,31 @@ public class EnemyAnimator : MonoBehaviour
         Color color = blockSprite.color;
         color.a = Mathf.Clamp01(value);
         blockSprite.color = color;
+    }
+
+    private void PlayState(int stateHash)
+    {
+        if (animator == null
+            || stateHash == 0
+            || !animator.HasState(0, stateHash))
+        {
+            return;
+        }
+
+        animator.Play(stateHash, 0, 0f);
+    }
+
+    private static int GetStateHash(string stateName)
+    {
+        if (string.IsNullOrEmpty(stateName))
+        {
+            return 0;
+        }
+
+        string fullStateName = stateName.IndexOf('.') >= 0
+            ? stateName
+            : BaseLayerPrefix + stateName;
+
+        return Animator.StringToHash(fullStateName);
     }
 }

@@ -63,14 +63,6 @@ public class BallFactory : MonoBehaviour
 
         runtimeStat.SetBase(definition);
 
-        int upgradeLevel = GetUpgradeLevel(type, stageBallProgresses);
-
-        if (ballCatalog.TryGetGrowthDefinition(type, out BallGrowthDefinitionSO growthDefinition)
-            && growthDefinition.TryGetLevelData(upgradeLevel, out BallGrowthLevelData growthLevel))
-        {
-            runtimeStat.ApplyGrowthLevel(growthLevel);
-        }
-
         if (runSkillInventory != null
             && runSkillInventory.TryGetActiveBallSkill(type, out ActiveBallSkillDefinitionSO skillDefinition, out int cardLevel)
             && skillDefinition.BallCardDefinition != null
@@ -78,6 +70,34 @@ public class BallFactory : MonoBehaviour
         {
             skillDefinition.BallCardDefinition.ApplyLevel(cardLevel, runtimeStat);
         }
+
+        int upgradeLevel = GetUpgradeLevel(type, stageBallProgresses);
+
+        if (ballCatalog.TryGetGrowthDefinition(type, out BallGrowthDefinitionSO growthDefinition)
+            && growthDefinition.BallType == type)
+        {
+            growthDefinition.ApplyLevel(upgradeLevel, runtimeStat);
+        }
+    }
+
+    public void FillSpawnedBallRuntimeStat(
+        BallType type,
+        int hitDamage,
+        BallRuntimeStat runtimeStat)
+    {
+        if (runtimeStat == null)
+        {
+            return;
+        }
+
+        if (ballCatalog == null || !ballCatalog.TryGetBallDefinition(type, out BallDefinitionSO definition))
+        {
+            runtimeStat.SetBase(null);
+            return;
+        }
+
+        runtimeStat.SetBase(definition);
+        runtimeStat.SetHitDamage(hitDamage);
     }
 
     private static int GetUpgradeLevel(BallType type, StageBallProgress[] stageBallProgresses)

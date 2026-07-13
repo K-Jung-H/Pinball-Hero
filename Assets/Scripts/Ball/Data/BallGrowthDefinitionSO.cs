@@ -1,15 +1,16 @@
 using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "BallGrowthDefinition", menuName = "Pinball/Ball/Growth Definition")]
-public class BallGrowthDefinitionSO : ScriptableObject
+public abstract class BallGrowthDefinitionSO : ScriptableObject
 {
     [SerializeField] private BallType ballType = BallType.Normal;
-    [SerializeField] private BallGrowthLevelData[] levels;
 
     public BallType BallType => ballType;
 
-    public bool TryGetLevelData(int level, out BallGrowthLevelData levelData)
+    public abstract bool ApplyLevel(int level, BallRuntimeStat runtimeStat);
+
+    protected static bool TryGetLevelData<T>(T[] levels, int level, out T levelData)
+        where T : BallGrowthLevelData
     {
         levelData = null;
 
@@ -29,10 +30,16 @@ public class BallGrowthDefinitionSO : ScriptableObject
 
         return false;
     }
+
+    protected static void ApplyCommon(BallGrowthLevelData levelData, BallRuntimeStat runtimeStat)
+    {
+        runtimeStat.ApplyHitDamageModifier(levelData.HitDamageAdd, levelData.HitDamageMultiplier);
+        runtimeStat.ApplyMoveSpeedMultiplier(levelData.MoveSpeedMultiplier);
+    }
 }
 
 [Serializable]
-public sealed class BallGrowthLevelData
+public class BallGrowthLevelData
 {
     [SerializeField] private int level = 1;
     [SerializeField] private int hitDamageAdd;

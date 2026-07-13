@@ -20,18 +20,18 @@ MonoBehaviour:
     moveSpeedMultiplier: 1
     spawnChance: 0.4
     spawnDamage: 10
-    spawnedBallType: 6
+    spawnedBallType: 7
   - level: 2
     hitDamageAdd: 30
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
     spawnChance: 0.5
     spawnDamage: 15
-    spawnedBallType: 6
+    spawnedBallType: 7
   - level: 3
     hitDamageAdd: 33
     hitDamageMultiplier: 1
     moveSpeedMultiplier: 1
     spawnChance: 0.6
     spawnDamage: 20
-    spawnedBallType: 6
+    spawnedBallType: 7

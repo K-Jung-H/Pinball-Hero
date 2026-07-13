@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -18,6 +19,9 @@ public class SkillSelectionController : MonoBehaviour
     private float previousTimeScale = 1f;
 
     public RunSkillInventory Inventory => runSkillInventory;
+    public bool IsOpen => isOpen;
+
+    public event Action SelectionCompleted;
 
     private void Awake()
     {
@@ -123,6 +127,7 @@ public class SkillSelectionController : MonoBehaviour
         }
 
         Hide();
+        SelectionCompleted?.Invoke();
     }
 
     private void EnsureOptionBuffer()

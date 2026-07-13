@@ -9,8 +9,13 @@ public class SkillCardPanel : MonoBehaviour
     [SerializeField] private Image thumbnailImage;
     [SerializeField] private TMP_Text categoryTitleText;
     [SerializeField] private TMP_Text skillNameText;
-    [SerializeField] private TMP_Text levelText;
     [SerializeField] private TMP_Text descriptionText;
+
+    [Header("Skill Level")]
+    [SerializeField] private Image[] levelImages;
+    [SerializeField] private Color acquiredLevelColor;
+    [SerializeField] private Color targetLevelColor;
+    [SerializeField] private Color emptyLevelColor;
 
     private SkillCardOption option;
     private Action<SkillCardOption> selectedCallback;
@@ -46,7 +51,7 @@ public class SkillCardPanel : MonoBehaviour
         if (categoryTitleText != null)
         {
             categoryTitleText.text = definition.Category == SkillCategory.ActiveBall
-                ? "Ball"
+                ? "Active"
                 : "Passive";
         }
 
@@ -55,12 +60,7 @@ public class SkillCardPanel : MonoBehaviour
             skillNameText.text = definition.DisplayName;
         }
 
-        if (levelText != null)
-        {
-            levelText.text = option.IsNew
-                ? "Lv.1"
-                : $"Lv.{option.CurrentLevel} > Lv.{option.TargetLevel}";
-        }
+        UpdateLevelImages();
 
         if (descriptionText != null)
         {
@@ -68,6 +68,39 @@ public class SkillCardPanel : MonoBehaviour
         }
 
         gameObject.SetActive(true);
+    }
+
+    private void UpdateLevelImages()
+    {
+        if (levelImages == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < levelImages.Length; i++)
+        {
+            Image levelImage = levelImages[i];
+
+            if (levelImage == null)
+            {
+                continue;
+            }
+
+            int level = i + 1;
+
+            if (level <= option.CurrentLevel)
+            {
+                levelImage.color = acquiredLevelColor;
+            }
+            else if (level == option.TargetLevel)
+            {
+                levelImage.color = targetLevelColor;
+            }
+            else
+            {
+                levelImage.color = emptyLevelColor;
+            }
+        }
     }
 
     private void OnClicked()

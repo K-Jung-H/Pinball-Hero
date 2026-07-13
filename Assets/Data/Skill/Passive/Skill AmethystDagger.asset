@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9c7ea11527f4f95a2da4332b7a215c4, type: 3}
+  m_Name: Skill AmethystDagger
+  m_EditorClassIdentifier: Assembly-CSharp::DirectionalCritPassiveDefinitionSO
+  skillId: amethyst_dagger
+  displayName: "\uC790\uC218\uC815 \uB2E8\uAC80"
+  icon: {fileID: -7508988934101286666, guid: a1e6f5e1ee91d7c4e939f411eca390eb, type: 3}
+  maxLevel: 3
+  descriptionFormat: "\uC801 \uC804\uBA74 \uD0C0\uACA9 \uC2DC \uCE58\uBA85\uD0C0
+    \uD655\uB960 {chance}({chanceDelta})% \uC99D\uAC00 (\uD0C0\uACA9\uD55C \uC801
+    \uD55C\uC815 1\uD68C)."
+  targetSide: 1
+  levels:
+  - level: 1
+    critChanceBonus: 0.1
+  - level: 2
+    critChanceBonus: 0.2
+  - level: 3
+    critChanceBonus: 0.3

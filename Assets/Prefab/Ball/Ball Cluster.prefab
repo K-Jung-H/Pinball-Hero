@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2830500477793854221}
   - component: {fileID: 1695430985865299053}
   - component: {fileID: 3262727768796985008}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: Ball Cluster
   m_TagString: Untagged
   m_Icon: {fileID: 0}

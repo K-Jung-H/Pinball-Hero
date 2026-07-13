@@ -22,12 +22,15 @@ public class Ball_Base : MonoBehaviour
 
     private static int endlineLayer = -1;
     private static int shooterLayer = -1;
-    private static int enemyLayer = -1;
+    private static int enemyTriggerLayer = -1;
+    private static int enemySolidLayer = -1;
+    private static int wallLayer = -1;
 
     private float currentSpeed;
     private BallState state;
     private bool hasExitedEndline;
     private int wallHitCount;
+    private Collider2D ignoredCollider;
     private readonly BallRuntimeStat runtimeStat = new BallRuntimeStat();
 
     public event Action<Ball_Base> ReturnRequested;
@@ -55,7 +58,11 @@ public class Ball_Base : MonoBehaviour
 
     private static void CacheLayers()
     {
-        if (endlineLayer != -1 && shooterLayer != -1 && enemyLayer != -1)
+        if (endlineLayer != -1
+            && shooterLayer != -1
+            && enemyTriggerLayer != -1
+            && enemySolidLayer != -1
+            && wallLayer != -1)
         {
             return;
         }
@@ -70,9 +77,19 @@ public class Ball_Base : MonoBehaviour
             shooterLayer = LayerMask.NameToLayer("Shooter");
         }
 
-        if (enemyLayer == -1)
+        if (enemyTriggerLayer == -1)
         {
-            enemyLayer = LayerMask.NameToLayer("Enemy");
+            enemyTriggerLayer = LayerMask.NameToLayer("Enemy Trigger");
+        }
+
+        if (enemySolidLayer == -1)
+        {
+            enemySolidLayer = LayerMask.NameToLayer("Enemy Solid");
+        }
+
+        if (wallLayer == -1)
+        {
+            wallLayer = LayerMask.NameToLayer("Wall");
         }
 
         if (endlineLayer == -1)
@@ -85,14 +102,26 @@ public class Ball_Base : MonoBehaviour
             Debug.LogError("Shooter layer is not defined.");
         }
 
-        if (enemyLayer == -1)
+        if (enemyTriggerLayer == -1)
         {
-            Debug.LogError("Enemy layer is not defined.");
+            Debug.LogError("Enemy Trigger layer is not defined.");
+        }
+
+        if (enemySolidLayer == -1)
+        {
+            Debug.LogError("Enemy Solid layer is not defined.");
+        }
+
+        if (wallLayer == -1)
+        {
+            Debug.LogError("Wall layer is not defined.");
         }
     }
 
     private void FixedUpdate()
     {
+        UpdateIgnoredCollision();
+
         if (state == BallState.Ready || ballRigidbody == null)
         {
             return;
@@ -110,6 +139,7 @@ public class Ball_Base : MonoBehaviour
 
     public virtual void ResetState()
     {
+        RestoreIgnoredCollision();
         wallHitCount = 0;
         state = BallState.Ready;
         hasExitedEndline = false;
@@ -123,11 +153,21 @@ public class Ball_Base : MonoBehaviour
 
     public virtual void Launch(Vector2 direction, float speed)
     {
+        BeginLaunch(direction, speed, false);
+    }
+
+    public virtual void LaunchFromPlayfield(Vector2 direction, float speed)
+    {
+        BeginLaunch(direction, speed, true);
+    }
+
+    private void BeginLaunch(Vector2 direction, float speed, bool startsOutsideEndline)
+    {
         Vector2 normalizedDirection = direction.sqrMagnitude > 0f ? direction.normalized : Vector2.up;
         currentSpeed = speed > 0f ? speed : 12f;
 
         state = BallState.Flying;
-        hasExitedEndline = false;
+        hasExitedEndline = startsOutsideEndline;
         ballRigidbody.linearVelocity = normalizedDirection * currentSpeed;
     }
 
@@ -136,23 +176,60 @@ public class Ball_Base : MonoBehaviour
         returnTarget = target;
     }
 
+    public void IgnoreCollisionUntilSeparated(Collider2D otherCollider)
+    {
+        RestoreIgnoredCollision();
+
+        if (ballCollider == null || otherCollider == null)
+        {
+            return;
+        }
+
+        ignoredCollider = otherCollider;
+        Physics2D.IgnoreCollision(ballCollider, ignoredCollider, true);
+    }
+
     public void ApplyRuntimeStat()
     {
         ballType = runtimeStat.BallType;
     }
 
+    public int ConsumeWallHitCount()
+    {
+        int count = wallHitCount;
+        wallHitCount = 0;
+        return count;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.layer == endlineLayer && state == BallState.Flying && hasExitedEndline)
+        int collisionLayer = collision.gameObject.layer;
+
+        if(collisionLayer == endlineLayer && state == BallState.Flying && hasExitedEndline)
         {
             state = BallState.Returning;
             return;
         }
 
-        if (collision.gameObject.layer == shooterLayer && state == BallState.Returning)
+        if (collisionLayer == shooterLayer && state == BallState.Returning)
         {
             ReturnRequested?.Invoke(this);
+            return;
         }
+
+        if (collisionLayer != enemyTriggerLayer || state != BallState.Flying)
+        {
+            return;
+        }
+
+        Enemy_Base enemy = collision.GetComponent<Enemy_Base>();
+
+        if (enemy == null)
+        {
+            return;
+        }
+
+        RaiseEnemyHit(enemy, GetTriggerHitPoint(collision));
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -166,26 +243,62 @@ public class Ball_Base : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        wallHitCount++;
+        int collisionLayer = collision.gameObject.layer;
 
-        if (state == BallState.Flying && collision.gameObject.layer == enemyLayer)
+        if (collisionLayer == wallLayer)
         {
-            Enemy_Base enemy = collision.gameObject.GetComponent<Enemy_Base>();
+            wallHitCount++;
 
-            if (enemy != null)
+            if (state == BallState.Returning)
             {
-                Vector2 hitPoint = collision.contactCount > 0
-                    ? collision.GetContact(0).point
-                    : (Vector2)transform.position;
-
-                EnemyHit?.Invoke(this, enemy, hitPoint);
+                RedirectToReturnTarget();
             }
+
+            return;
         }
 
-        if (state == BallState.Returning)
+        if (collisionLayer != enemySolidLayer || state != BallState.Flying)
         {
-            RedirectToReturnTarget();
+            return;
         }
+
+        Enemy_Base enemy = collision.gameObject.GetComponentInParent<Enemy_Base>();
+
+        if (enemy == null)
+        {
+            return;
+        }
+
+        RaiseEnemyHit(enemy, GetCollisionHitPoint(collision));
+    }
+
+    private void RaiseEnemyHit(Enemy_Base enemy, Vector2 hitPoint)
+    {
+        if (enemy != null)
+        {
+            EnemyHit?.Invoke(this, enemy, hitPoint);
+        }
+    }
+
+    private Vector2 GetCollisionHitPoint(Collision2D collision)
+    {
+        return collision.contactCount > 0
+            ? collision.GetContact(0).point
+            : (Vector2)transform.position;
+    }
+
+    private Vector2 GetTriggerHitPoint(Collider2D enemyCollider)
+    {
+        if (ballCollider == null || enemyCollider == null)
+        {
+            return transform.position;
+        }
+
+        ColliderDistance2D distance = ballCollider.Distance(enemyCollider);
+
+        return distance.isValid
+            ? distance.pointB
+            : (Vector2)transform.position;
     }
 
     private void RedirectToReturnTarget()
@@ -199,5 +312,31 @@ public class Ball_Base : MonoBehaviour
             ((Vector2)returnTarget.position - ballRigidbody.position).normalized;
 
         ballRigidbody.linearVelocity = directionToTarget * currentSpeed;
+    }
+
+    private void UpdateIgnoredCollision()
+    {
+        if (ignoredCollider == null || ballCollider == null)
+        {
+            ignoredCollider = null;
+            return;
+        }
+
+        ColliderDistance2D distance = ballCollider.Distance(ignoredCollider);
+
+        if (!distance.isValid || distance.distance > 0.001f)
+        {
+            RestoreIgnoredCollision();
+        }
+    }
+
+    private void RestoreIgnoredCollision()
+    {
+        if (ballCollider != null && ignoredCollider != null)
+        {
+            Physics2D.IgnoreCollision(ballCollider, ignoredCollider, false);
+        }
+
+        ignoredCollider = null;
     }
 }

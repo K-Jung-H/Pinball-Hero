@@ -20,7 +20,7 @@ public sealed class LaserBallCardDefinitionSO : BallCardDefinitionSO
 
         if (laser != null)
         {
-            laser.ApplyLevel(levelData.RowDamage);
+            laser.SetCardLevel(levelData.RowDamage);
         }
 
         return true;

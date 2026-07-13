@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1695430985865299053}
   - component: {fileID: 3262727768796985008}
   m_Layer: 7
-  m_Name: Ball Ice
+  m_Name: Ball Ghost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 890c7da2d6965164887833eed9093d01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ball_Base
-  ballType: 3
+  ballType: 5
   ballRigidbody: {fileID: 2830500477793854221}
   ballCollider: {fileID: 1695430985865299053}
   returnTarget: {fileID: 0}
@@ -88,7 +88,7 @@ CircleCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: c562d03847a14494195c40b34692c35a, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -163,7 +163,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 498749362002363885, guid: 8fb6393ba6db4034aa1a9e65092dcacf, type: 3}
+  m_Sprite: {fileID: 778793131886074852, guid: 98455f897eede7b48adfe30c947a5d85, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

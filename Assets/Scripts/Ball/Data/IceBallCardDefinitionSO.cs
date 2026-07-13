@@ -20,7 +20,7 @@ public sealed class IceBallCardDefinitionSO : BallCardDefinitionSO
 
         if (freeze != null)
         {
-            freeze.ApplyLevel(
+            freeze.SetCardLevel(
                 levelData.FreezeChance,
                 levelData.FreezeDuration,
                 levelData.SlowRatio,

@@ -16,3 +16,11 @@ MonoBehaviour:
   waves:
   - {fileID: 11400000, guid: 4374294213ea65840b232378c3d1537a, type: 2}
   - {fileID: 11400000, guid: 4374294213ea65840b232378c3d1537a, type: 2}
+  maxStageLevel: 20
+  experienceRequirements:
+  - startLevel: 0
+    requiredExperience: 20
+  - startLevel: 5
+    requiredExperience: 30
+  - startLevel: 10
+    requiredExperience: 40

@@ -20,7 +20,7 @@ public sealed class FireBallCardDefinitionSO : BallCardDefinitionSO
 
         if (burn != null)
         {
-            burn.ApplyLevel(levelData.BurnDotDamage, levelData.BurnDuration, levelData.BurnMaxStack);
+            burn.SetCardLevel(levelData.BurnDotDamage, levelData.BurnDuration, levelData.BurnMaxStack);
         }
 
         return true;
