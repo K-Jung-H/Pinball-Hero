@@ -13,6 +13,7 @@ public class Ball_Base : MonoBehaviour
     [Header("Components")]
     [SerializeField] private Rigidbody2D ballRigidbody;
     [SerializeField] private Collider2D ballCollider;
+    [SerializeField] private BallCollisionAudio collisionAudio;
 
     private Transform returnTarget;
 
@@ -128,6 +129,7 @@ public class Ball_Base : MonoBehaviour
     public virtual void ResetState()
     {
         RestoreIgnoredCollision();
+        collisionAudio?.Stop();
         wallHitCount = 0;
         state = BallState.Ready;
         hasExitedEndline = false;
@@ -213,6 +215,7 @@ public class Ball_Base : MonoBehaviour
             return;
         }
 
+        collisionAudio?.Play();
         RaiseEnemyHit(enemy, GetTriggerHitPoint(collision));
     }
 
@@ -231,6 +234,11 @@ public class Ball_Base : MonoBehaviour
 
         if (collisionLayer == wallLayer)
         {
+            if (state != BallState.Ready)
+            {
+                collisionAudio?.Play();
+            }
+
             wallHitCount++;
 
             if (state == BallState.Returning)
@@ -259,6 +267,7 @@ public class Ball_Base : MonoBehaviour
             return;
         }
 
+        collisionAudio?.Play();
         RaiseEnemyHit(enemy, GetCollisionHitPoint(collision));
         OnFlyingCollisionResolved(collision);
     }
