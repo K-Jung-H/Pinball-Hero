@@ -2,6 +2,10 @@
 
 PurpleCow 클라이언트 프로그래머 채용 과제인 `통통 디펜스: 핀볼 마스터`의 핵심 플레이를 기반으로 제작한 Unity 2D 핀볼 디펜스 프로젝트입니다.
 
+## Repository
+
+[K-Jung-H/Pinball-Hero](https://github.com/K-Jung-H/Pinball-Hero)
+
 ## 개발 환경
 
 | 항목 | 내용 |
