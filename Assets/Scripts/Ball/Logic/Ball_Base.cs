@@ -10,15 +10,11 @@ public class Ball_Base : MonoBehaviour
         Returning
     }
 
-    [Header("Definition")]
-    [SerializeField] private BallType ballType = BallType.Normal;
-
     [Header("Components")]
     [SerializeField] private Rigidbody2D ballRigidbody;
     [SerializeField] private Collider2D ballCollider;
 
-    [Header("Return")]
-    [SerializeField] private Transform returnTarget;
+    private Transform returnTarget;
 
     private static int endlineLayer = -1;
     private static int shooterLayer = -1;
@@ -36,24 +32,16 @@ public class Ball_Base : MonoBehaviour
     public event Action<Ball_Base> ReturnRequested;
     public event Action<Ball_Base, Enemy_Base, Vector2> EnemyHit;
 
-    public BallType BallType => ballType;
+    public BallType BallType => runtimeStat.BallType;
     public BallRuntimeStat RuntimeStat => runtimeStat;
-    public int WallHitCount => wallHitCount;
+    public virtual int CurrentHitDamage => runtimeStat.HitDamage;
     public Vector2 Velocity => ballRigidbody != null ? ballRigidbody.linearVelocity : Vector2.zero;
+
+    protected Rigidbody2D BallRigidbody => ballRigidbody;
 
     protected void Awake()
     {
         CacheLayers();
-
-        if (ballRigidbody == null)
-        {
-            ballRigidbody = GetComponent<Rigidbody2D>();
-        }
-
-        if (ballCollider == null)
-        {
-            ballCollider = GetComponent<Collider2D>();
-        }
     }
 
     private static void CacheLayers()
@@ -169,6 +157,7 @@ public class Ball_Base : MonoBehaviour
         state = BallState.Flying;
         hasExitedEndline = startsOutsideEndline;
         ballRigidbody.linearVelocity = normalizedDirection * currentSpeed;
+        OnLaunched();
     }
 
     public void SetReturnTarget(Transform target)
@@ -189,11 +178,6 @@ public class Ball_Base : MonoBehaviour
         Physics2D.IgnoreCollision(ballCollider, ignoredCollider, true);
     }
 
-    public void ApplyRuntimeStat()
-    {
-        ballType = runtimeStat.BallType;
-    }
-
     public int ConsumeWallHitCount()
     {
         int count = wallHitCount;
@@ -205,7 +189,7 @@ public class Ball_Base : MonoBehaviour
     {
         int collisionLayer = collision.gameObject.layer;
 
-        if(collisionLayer == endlineLayer && state == BallState.Flying && hasExitedEndline)
+        if (collisionLayer == endlineLayer && state == BallState.Flying && hasExitedEndline)
         {
             state = BallState.Returning;
             return;
@@ -234,7 +218,7 @@ public class Ball_Base : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if(collision.gameObject.layer == endlineLayer && state == BallState.Flying)
+        if (collision.gameObject.layer == endlineLayer && state == BallState.Flying)
         {
             hasExitedEndline = true;
             return;
@@ -252,6 +236,12 @@ public class Ball_Base : MonoBehaviour
             if (state == BallState.Returning)
             {
                 RedirectToReturnTarget();
+                return;
+            }
+
+            if (state == BallState.Flying)
+            {
+                OnFlyingCollisionResolved(collision);
             }
 
             return;
@@ -270,6 +260,26 @@ public class Ball_Base : MonoBehaviour
         }
 
         RaiseEnemyHit(enemy, GetCollisionHitPoint(collision));
+        OnFlyingCollisionResolved(collision);
+    }
+
+    protected virtual void OnLaunched()
+    {
+    }
+
+    protected virtual void OnFlyingCollisionResolved(Collision2D collision)
+    {
+    }
+
+    protected void SetFlightMotion(Vector2 direction, float speed)
+    {
+        if (ballRigidbody == null || direction.sqrMagnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        currentSpeed = Mathf.Max(0f, speed);
+        ballRigidbody.linearVelocity = direction.normalized * currentSpeed;
     }
 
     private void RaiseEnemyHit(Enemy_Base enemy, Vector2 hitPoint)

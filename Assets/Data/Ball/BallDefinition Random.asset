@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9d660352261d0c42ab8d32d2debad64, type: 3}
+  m_Name: BallDefinition Random
+  m_EditorClassIdentifier: Assembly-CSharp::BallDefinitionSO
+  ballType: 8
+  prefab: {fileID: 4711079998649885964, guid: 2801227a88834ad0ac50f9b7a93851a3, type: 3}
+  damageType: 0
+  baseHitDamage: 0
+  baseMoveSpeed: 20
+  baseCritChance: 0
+  baseCritDamageMultiplier: 1.5
+  effects:
+  - {fileID: 11400000, guid: 184ec4d92545437a99377bf974d84c27, type: 2}

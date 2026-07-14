@@ -169,10 +169,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1080, y: 2160}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -244,8 +244,6 @@ MonoBehaviour:
   - {fileID: 1919348310760515021}
   - {fileID: 102001703}
   - {fileID: 186021679}
-  enableTestOpenInput: 1
-  testOpenKey: 1
   runSkillInventory:
     maxActiveSkillCount: 4
     maxPassiveSkillCount: 2
@@ -1803,11 +1801,12 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f26dbf37d10d4a4a97d9299ed8c5041, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SpawnAreaSensor
+  m_EditorClassIdentifier: Assembly-CSharp::WaveSpawner
   spawnedEnemyRoot: {fileID: 293760595}
   spawnAreaCollider: {fileID: 856522830}
   cellSize: {x: 2, y: 2}
   rowSpawnInterval: 1
+  initialPoolSizePerEnemyType: 8
 --- !u!61 &856522830
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2732,7 +2731,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c80d66d1946af0f41b2d72a569b17ab7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DamageTextPool
+  m_EditorClassIdentifier: Assembly-CSharp::DamageTextSystem
   prefab: {fileID: 8891545013298743581, guid: 86db3201cc2635c48bcd2348adf8f2ee, type: 3}
   container: {fileID: 1841272619}
   initialPoolSize: 32
@@ -3441,7 +3440,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3cd73b195fdf8b24b93f7c6b994ddfb5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
 --- !u!1 &2114876538
 GameObject:
   m_ObjectHideFlags: 0
@@ -3755,7 +3754,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1664815347139334095, guid: 8d4c2239fed78ce4ebe61e12ec07a0c8, type: 3}
       propertyPath: hpMax
-      value: 50
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 1664815347139334095, guid: 8d4c2239fed78ce4ebe61e12ec07a0c8, type: 3}
       propertyPath: ballShooter

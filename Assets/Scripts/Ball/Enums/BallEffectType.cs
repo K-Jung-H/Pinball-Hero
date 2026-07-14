@@ -5,5 +5,6 @@ public enum BallEffectType
     Freeze = 2,
     Laser = 3,
     Pierce = 4,
-    Cluster = 5
+    Cluster = 5,
+    Randomize = 6
 }

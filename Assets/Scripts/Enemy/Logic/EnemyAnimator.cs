@@ -25,9 +25,12 @@ public class EnemyAnimator : MonoBehaviour
     private int hitStateHash;
     private int deathStateHash;
     private bool isAttackPlaying;
+    private bool isDeathPlaying;
     private float attackElapsed;
     private Vector3 bodyStartPosition;
     private Vector3 bodyDefaultLocalPosition;
+    private Quaternion bodyDefaultLocalRotation;
+    private Vector3 bodyDefaultLocalScale;
     private Color blockDefaultColor;
 
     private void Awake()
@@ -35,6 +38,8 @@ public class EnemyAnimator : MonoBehaviour
         if (bodyTransform != null)
         {
             bodyDefaultLocalPosition = bodyTransform.localPosition;
+            bodyDefaultLocalRotation = bodyTransform.localRotation;
+            bodyDefaultLocalScale = bodyTransform.localScale;
         }
 
         if (blockSprite != null)
@@ -80,9 +85,20 @@ public class EnemyAnimator : MonoBehaviour
         {
             statusController.VisualStatusChanged -= OnVisualStatusChanged;
         }
+
+        isAttackPlaying = false;
+        isDeathPlaying = false;
+        attackElapsed = 0f;
+        RestoreVisualDefaults();
     }
 
     private void Update()
+    {
+        UpdateAttackMotion();
+        UpdateDeathAnimation();
+    }
+
+    private void UpdateAttackMotion()
     {
         if (!isAttackPlaying || enemy == null)
         {
@@ -108,12 +124,24 @@ public class EnemyAnimator : MonoBehaviour
         }
     }
 
-    public void OnDeathAnimationFinished()
+    private void UpdateDeathAnimation()
     {
-        if (enemy != null)
+        if (!isDeathPlaying || enemy == null || animator == null)
         {
-            enemy.Despawn();
+            return;
         }
+
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (stateInfo.fullPathHash != deathStateHash
+            || animator.IsInTransition(0)
+            || stateInfo.normalizedTime < 1f)
+        {
+            return;
+        }
+
+        isDeathPlaying = false;
+        enemy.Despawn();
     }
 
     private void OnEnemyDamaged(Enemy_Base target)
@@ -128,7 +156,17 @@ public class EnemyAnimator : MonoBehaviour
 
     private void OnEnemyDied(Enemy_Base target)
     {
-        PlayState(deathStateHash);
+        isAttackPlaying = false;
+        isDeathPlaying = PlayState(deathStateHash);
+
+        if (isDeathPlaying)
+        {
+            animator.Update(0f);
+        }
+        else if (target != null)
+        {
+            target.Despawn();
+        }
     }
 
     private void OnVisualStatusChanged(EnemyVisualStatus visualStatus)
@@ -174,28 +212,42 @@ public class EnemyAnimator : MonoBehaviour
     private void ResetVisualState()
     {
         isAttackPlaying = false;
+        isDeathPlaying = false;
         attackElapsed = 0f;
 
+        if (animator != null)
+        {
+            animator.enabled = false;
+        }
+
+        RestoreVisualDefaults();
+
+        if (animator != null)
+        {
+            animator.enabled = true;
+            animator.SetInteger(visualStatusHash, (int)EnemyVisualStatus.Idle);
+
+            PlayState(idleStateHash);
+            animator.Update(0f);
+        }
+
+        RestoreVisualDefaults();
+    }
+
+    private void RestoreVisualDefaults()
+    {
         if (bodyTransform != null)
         {
-            bodyTransform.localPosition = bodyDefaultLocalPosition;
+            bodyTransform.SetLocalPositionAndRotation(
+                bodyDefaultLocalPosition,
+                bodyDefaultLocalRotation);
+            bodyTransform.localScale = bodyDefaultLocalScale;
         }
 
         if (blockSprite != null)
         {
             blockSprite.color = blockDefaultColor;
         }
-
-        if (animator == null)
-        {
-            return;
-        }
-
-        animator.enabled = true;
-        animator.SetInteger(visualStatusHash, (int)EnemyVisualStatus.Idle);
-
-        PlayState(idleStateHash);
-        animator.Update(0f);
     }
 
     private void SetBlockAlpha(float value)
@@ -210,16 +262,17 @@ public class EnemyAnimator : MonoBehaviour
         blockSprite.color = color;
     }
 
-    private void PlayState(int stateHash)
+    private bool PlayState(int stateHash)
     {
         if (animator == null
             || stateHash == 0
             || !animator.HasState(0, stateHash))
         {
-            return;
+            return false;
         }
 
         animator.Play(stateHash, 0, 0f);
+        return true;
     }
 
     private static int GetStateHash(string stateName)

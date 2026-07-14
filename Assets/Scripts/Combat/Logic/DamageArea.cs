@@ -126,6 +126,8 @@ public sealed class DamageArea : MonoBehaviour
         owner = null;
         prefabKey = null;
         combatPipeline = null;
+        sourceBallType = BallType.None;
+        damageType = DamageType.Normal;
         damage = 0;
         fixedStepCount = 0;
         totalVisualTime = 0f;
@@ -197,13 +199,12 @@ public sealed class DamageArea : MonoBehaviour
     {
         if (owner == null)
         {
-            gameObject.SetActive(false);
+            ResetState();
             return;
         }
 
         AreaEffectSystem poolOwner = owner;
         DamageArea sourcePrefab = prefabKey;
-        ResetState();
         poolOwner.Release(this, sourcePrefab);
     }
 }

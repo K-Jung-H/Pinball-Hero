@@ -7,5 +7,6 @@
         Laser = 4,
         Ghost = 5,
         Cluster = 6,
-        ClusterFragment = 7
+        ClusterFragment = 7,
+        Random = 8
     }

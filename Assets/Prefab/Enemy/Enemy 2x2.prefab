@@ -52,8 +52,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77e272b890385c64fb44eb6d3475f2b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy_Base
-  hpMax: 200
-  hpCurrent: 0
   hpBar: {fileID: 4830807298281477659}
   bodyCollider: {fileID: 7562566090218455664}
   hitTriggerCollider: {fileID: 131858967200871941}
@@ -205,7 +203,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c13f73ebefd35f44cb5f7d15741393b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteHpBar
-  backgroundSprite: {fileID: 6649672142755982265}
   fillSprite: {fileID: 7679682165328064626}
   fillColorByHpRatio:
     serializedVersion: 2

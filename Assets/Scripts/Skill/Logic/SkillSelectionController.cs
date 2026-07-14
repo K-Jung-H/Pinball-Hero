@@ -6,8 +6,6 @@ public class SkillSelectionController : MonoBehaviour
 {
     [SerializeField] private GameObject viewRoot;
     [SerializeField] private SkillCardPanel[] panels;
-    [SerializeField] private bool enableTestOpenInput = true;
-    [SerializeField] private Key testOpenKey = Key.Space;
     [SerializeField] private RunSkillInventory runSkillInventory = new RunSkillInventory();
 
     private readonly SkillCardResolver resolver = new SkillCardResolver();
@@ -31,12 +29,12 @@ public class SkillSelectionController : MonoBehaviour
 
     private void Update()
     {
-        if (!enableTestOpenInput || isOpen || Keyboard.current == null)
+        if (isOpen || Keyboard.current == null)
         {
             return;
         }
 
-        if (Keyboard.current[testOpenKey].wasPressedThisFrame)
+        if (Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             ShowChoices();
         }

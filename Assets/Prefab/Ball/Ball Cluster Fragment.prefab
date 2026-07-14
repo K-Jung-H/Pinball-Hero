@@ -47,10 +47,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 890c7da2d6965164887833eed9093d01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ball_Base
-  ballType: 7
   ballRigidbody: {fileID: 2830500477793854221}
   ballCollider: {fileID: 1695430985865299053}
-  returnTarget: {fileID: 0}
 --- !u!50 &2830500477793854221
 Rigidbody2D:
   serializedVersion: 5

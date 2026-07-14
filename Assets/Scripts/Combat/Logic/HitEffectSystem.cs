@@ -2,8 +2,10 @@ using UnityEngine;
 
 public sealed class HitEffectSystem
 {
+    private static readonly int HandlerCount = GetHandlerCount();
+
     private readonly BallHitEffectHandler[] handlers =
-        new BallHitEffectHandler[(int)BallEffectType.Cluster + 1];
+        new BallHitEffectHandler[HandlerCount];
     private readonly CombatPipeline combatPipeline;
 
     public HitEffectSystem(CombatPipeline pipeline)
@@ -73,6 +75,25 @@ public sealed class HitEffectSystem
         }
 
         handlers[handlerIndex] = handler;
+    }
+
+    private static int GetHandlerCount()
+    {
+        BallEffectType[] values =
+            (BallEffectType[])System.Enum.GetValues(typeof(BallEffectType));
+        int maxValue = 0;
+
+        for (int i = 0; i < values.Length; i++)
+        {
+            int value = (int)values[i];
+
+            if (value > maxValue)
+            {
+                maxValue = value;
+            }
+        }
+
+        return maxValue + 1;
     }
 }
 

@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60276f0bbf2546438f16d9b66e78dcd4, type: 3}
+  m_Name: RandomBallCardDefinition
+  m_EditorClassIdentifier: Assembly-CSharp::RandomBallCardDefinitionSO
+  ballType: 8
+  levels:
+  - level: 1
+    hitDamageAdd: 18
+    hitDamageMultiplier: 1
+    moveSpeedMultiplier: 1
+    damageDecreaseRatio: 0.3
+    damageIncreaseRatio: 0.3
+    speedDecreaseRatio: 0.3
+    speedIncreaseRatio: 0.3
+    angleVariance: 25
+  - level: 2
+    hitDamageAdd: 22
+    hitDamageMultiplier: 1
+    moveSpeedMultiplier: 1
+    damageDecreaseRatio: 0.2
+    damageIncreaseRatio: 0.45
+    speedDecreaseRatio: 0.2
+    speedIncreaseRatio: 0.45
+    angleVariance: 15
+  - level: 3
+    hitDamageAdd: 26
+    hitDamageMultiplier: 1
+    moveSpeedMultiplier: 1
+    damageDecreaseRatio: 0.1
+    damageIncreaseRatio: 0.6
+    speedDecreaseRatio: 0.1
+    speedIncreaseRatio: 0.6
+    angleVariance: 8

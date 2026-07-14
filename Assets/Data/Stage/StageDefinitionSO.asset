@@ -15,7 +15,17 @@ MonoBehaviour:
   initialSpawnRows: 2
   waves:
   - {fileID: 11400000, guid: 4374294213ea65840b232378c3d1537a, type: 2}
-  - {fileID: 11400000, guid: 4374294213ea65840b232378c3d1537a, type: 2}
+  - {fileID: 11400000, guid: c82ce3af05904139bc0cb19e45976599, type: 2}
+  - {fileID: 11400000, guid: c55355eef2404a97ad3d05231921fb20, type: 2}
+  - {fileID: 11400000, guid: 95b8f3605fd546b5ba85c850df47eb76, type: 2}
+  - {fileID: 11400000, guid: b80e43dbe6ea4e6ca0621e9442ed2524, type: 2}
+  - {fileID: 11400000, guid: e0b8bb25a5f54db1aca165b1e064437b, type: 2}
+  - {fileID: 11400000, guid: 84f226377a2a4a85bdd6fa7451d7215a, type: 2}
+  - {fileID: 11400000, guid: 8580aeff0f47456a91e03ef760567ffe, type: 2}
+  - {fileID: 11400000, guid: d484ebb6206c43298ba01d7d9cc9ceb3, type: 2}
+  - {fileID: 11400000, guid: 6a0aa81c63eb4187a219ca2159db9064, type: 2}
+  - {fileID: 11400000, guid: f39d26216a8c4fad9bcfc993fd1877a6, type: 2}
+  - {fileID: 11400000, guid: bdd5a9c4e0934d00b84b1dd9cda75779, type: 2}
   maxStageLevel: 20
   experienceRequirements:
   - startLevel: 0

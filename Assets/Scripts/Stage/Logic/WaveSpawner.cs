@@ -8,6 +8,8 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] private Collider2D spawnAreaCollider;
     [SerializeField] private Vector2 cellSize = Vector2.one;
     [SerializeField] private float rowSpawnInterval = 1f;
+    [Min(0)]
+    [SerializeField] private int initialPoolSizePerEnemyType = 8;
 
     private readonly List<SpawnedEnemyState> activeEnemies = new List<SpawnedEnemyState>();
     private readonly List<Enemy_Base> spawnedEnemies = new List<Enemy_Base>();
@@ -24,6 +26,7 @@ public class WaveSpawner : MonoBehaviour
     private bool isRunning;
     private bool hasFinishedAllWaves;
     private bool hasRaisedStageCompleted;
+    private EnemyPool enemyPool;
 
     public Vector2 CellSize => cellSize;
     public Bounds BoardBounds => spawnAreaCollider != null
@@ -36,6 +39,25 @@ public class WaveSpawner : MonoBehaviour
     public event Action<int> WaveStarted;
     public event Action StageCompleted;
 
+    private void Awake()
+    {
+        EnsureEnemyPool();
+    }
+
+    private void EnsureEnemyPool()
+    {
+        if (enemyPool != null)
+        {
+            return;
+        }
+
+        Transform poolParent = spawnedEnemyRoot != null
+            ? spawnedEnemyRoot
+            : transform;
+
+        enemyPool = new EnemyPool(poolParent);
+    }
+
     public void SetAttackTarget(Transform target)
     {
         attackTarget = target;
@@ -43,6 +65,7 @@ public class WaveSpawner : MonoBehaviour
 
     public void ResetRun()
     {
+        EnsureEnemyPool();
         isRunning = false;
 
         for (int i = spawnedEnemies.Count - 1; i >= 0; i--)
@@ -54,15 +77,12 @@ public class WaveSpawner : MonoBehaviour
                 continue;
             }
 
-            enemy.EnemyDied -= OnEnemyDied;
-            enemy.EndlineReached -= OnEnemyEndlineReached;
-            enemy.EnemyAttackCompleted -= OnEnemyAttackCompleted;
-            enemy.gameObject.SetActive(false);
-            Destroy(enemy.gameObject);
+            UnsubscribeEnemy(enemy);
         }
 
         spawnedEnemies.Clear();
         activeEnemies.Clear();
+        enemyPool?.ReturnAll();
         stageDefinition = null;
         waveDefinition = null;
         spawnedEntries = null;
@@ -77,6 +97,8 @@ public class WaveSpawner : MonoBehaviour
 
     public void StartStage(StageDefinitionSO definition)
     {
+        EnsureEnemyPool();
+
         if (definition == null)
         {
             Debug.LogError("StageDefinition is not assigned.");
@@ -103,6 +125,7 @@ public class WaveSpawner : MonoBehaviour
         pendingAttackCount = 0;
         hasFinishedAllWaves = false;
         hasRaisedStageCompleted = false;
+        PrewarmEnemyPool(stageDefinition);
         StartWave(stageDefinition.Waves[currentWaveIndex]);
     }
 
@@ -131,7 +154,6 @@ public class WaveSpawner : MonoBehaviour
         spawnTimer = 0f;
         isRunning = true;
 
-        Debug.Log($"Wave Start: {currentWaveIndex + 1}/{stageDefinition.Waves.Length} ({waveDefinition.name})");
         WaveStarted?.Invoke(currentWaveIndex + 1);
 
         SpawnLines(0, nextSpawnLine - 1, nextSpawnLine - 1);
@@ -232,12 +254,17 @@ public class WaveSpawner : MonoBehaviour
         }
 
         Vector3 position = GetSpawnPosition(entry, enemyDefinition, anchorLine);
-        Enemy_Base enemy = Instantiate(prefab, position, Quaternion.identity, spawnedEnemyRoot);
-        enemy.Initialize(enemyDefinition);
+        Enemy_Base enemy = enemyPool != null
+            ? enemyPool.Get(enemyDefinition, position)
+            : null;
+
+        if (enemy == null)
+        {
+            return false;
+        }
+
         enemy.SetAttackTarget(attackTarget);
-        enemy.EnemyDied += OnEnemyDied;
-        enemy.EndlineReached += OnEnemyEndlineReached;
-        enemy.EnemyAttackCompleted += OnEnemyAttackCompleted;
+        SubscribeEnemy(enemy);
         spawnedEnemies.Add(enemy);
         activeEnemies.Add(new SpawnedEnemyState(enemy, enemyDefinition));
 
@@ -250,9 +277,7 @@ public class WaveSpawner : MonoBehaviour
 
         if (enemy != null)
         {
-            enemy.EnemyDied -= OnEnemyDied;
-            enemy.EndlineReached -= OnEnemyEndlineReached;
-            enemy.EnemyAttackCompleted -= OnEnemyAttackCompleted;
+            UnsubscribeActiveEvents(enemy);
         }
 
         EnemyDefeated?.Invoke(enemy);
@@ -292,6 +317,84 @@ public class WaveSpawner : MonoBehaviour
         }
 
         RemoveActiveEnemy(enemy);
+    }
+
+    private void OnEnemyDespawned(Enemy_Base enemy)
+    {
+        UnsubscribeEnemy(enemy);
+
+        for (int i = spawnedEnemies.Count - 1; i >= 0; i--)
+        {
+            if (spawnedEnemies[i] == enemy)
+            {
+                spawnedEnemies.RemoveAt(i);
+                return;
+            }
+        }
+    }
+
+    private void PrewarmEnemyPool(StageDefinitionSO definition)
+    {
+        if (enemyPool == null || definition == null)
+        {
+            return;
+        }
+
+        WaveDefinitionSO[] waves = definition.Waves;
+
+        for (int waveIndex = 0; waveIndex < waves.Length; waveIndex++)
+        {
+            WaveDefinitionSO wave = waves[waveIndex];
+
+            if (wave == null || wave.SpawnEntries == null)
+            {
+                continue;
+            }
+
+            WaveSpawnEntry[] entries = wave.SpawnEntries;
+
+            for (int entryIndex = 0; entryIndex < entries.Length; entryIndex++)
+            {
+                enemyPool.Prewarm(entries[entryIndex].Enemy, initialPoolSizePerEnemyType);
+            }
+        }
+    }
+
+    private void SubscribeEnemy(Enemy_Base enemy)
+    {
+        if (enemy == null)
+        {
+            return;
+        }
+
+        UnsubscribeEnemy(enemy);
+        enemy.EnemyDied += OnEnemyDied;
+        enemy.EndlineReached += OnEnemyEndlineReached;
+        enemy.EnemyAttackCompleted += OnEnemyAttackCompleted;
+        enemy.Despawned += OnEnemyDespawned;
+    }
+
+    private void UnsubscribeActiveEvents(Enemy_Base enemy)
+    {
+        if (enemy == null)
+        {
+            return;
+        }
+
+        enemy.EnemyDied -= OnEnemyDied;
+        enemy.EndlineReached -= OnEnemyEndlineReached;
+        enemy.EnemyAttackCompleted -= OnEnemyAttackCompleted;
+    }
+
+    private void UnsubscribeEnemy(Enemy_Base enemy)
+    {
+        if (enemy == null)
+        {
+            return;
+        }
+
+        UnsubscribeActiveEvents(enemy);
+        enemy.Despawned -= OnEnemyDespawned;
     }
 
     private Vector3 GetSpawnPosition(WaveSpawnEntry entry, EnemyDefinitionSO enemyDefinition, int anchorLine)
@@ -424,7 +527,7 @@ public class WaveSpawner : MonoBehaviour
         StageCompleted?.Invoke();
     }
 
-    private class SpawnedEnemyState
+    private readonly struct SpawnedEnemyState
     {
         public readonly Enemy_Base Enemy;
         public readonly EnemyDefinitionSO Definition;

@@ -76,5 +76,4 @@ public readonly struct SkillCardOption
     public int CurrentLevel { get; }
     public int TargetLevel { get; }
     public bool IsValid => Definition != null;
-    public bool IsNew => CurrentLevel <= 0;
 }

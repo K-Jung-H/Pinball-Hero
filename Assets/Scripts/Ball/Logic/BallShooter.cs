@@ -150,7 +150,6 @@ public class BallShooter : MonoBehaviour
         ball.transform.position = spawnPoint.position;
         ball.gameObject.SetActive(true);
         ballFactory.FillRuntimeStat(ball.BallType, stageBallProgresses, runSkillInventory, ball.RuntimeStat);
-        ball.ApplyRuntimeStat();
 
         float speed = ball.RuntimeStat.MoveSpeed > 0f
             ? ball.RuntimeStat.MoveSpeed
@@ -208,7 +207,6 @@ public class BallShooter : MonoBehaviour
             BallType.ClusterFragment,
             request.Damage,
             fragment.RuntimeStat);
-        fragment.ApplyRuntimeStat();
         fragment.gameObject.SetActive(true);
 
         if (request.SourceCollider != null
@@ -231,7 +229,9 @@ public class BallShooter : MonoBehaviour
         Ball_Base fragment = ballFactory.Create(
             BallType.ClusterFragment,
             spawnPoint.position,
-            transform);
+            transform,
+            stageBallProgresses,
+            runSkillInventory);
 
         if (fragment == null)
         {

@@ -12,9 +12,6 @@ public sealed class StageExperienceSystem : MonoBehaviour
     private bool isInitialized;
 
     public int StageLevel => stageLevel;
-    public int CurrentExperience => currentExperience;
-    public int RequiredExperience => requiredExperience;
-    public int PendingSelectionCount => pendingSelectionCount;
     public bool IsMaxLevel => isInitialized
         && stageDefinition != null
         && stageLevel >= stageDefinition.MaxStageLevel;

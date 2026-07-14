@@ -48,12 +48,22 @@ public abstract class SkillDefinitionSO : ScriptableObject
         text = text.Replace("{damageMultiplierDelta}", FormatSignedNumber(deltaValue.DamageMultiplierPercent));
         text = text.Replace("{damageAdd}", FormatNumber(targetValue.PassiveDamageAdd));
         text = text.Replace("{damageAddDelta}", FormatSignedNumber(deltaValue.PassiveDamageAdd));
+        text = text.Replace("{damageDecrease}", FormatNumber(targetValue.DamageDecreasePercent));
+        text = text.Replace("{damageDecreaseDelta}", FormatSignedNumber(deltaValue.DamageDecreasePercent));
+        text = text.Replace("{damageIncrease}", FormatNumber(targetValue.DamageIncreasePercent));
+        text = text.Replace("{damageIncreaseDelta}", FormatSignedNumber(deltaValue.DamageIncreasePercent));
+        text = text.Replace("{speedDecrease}", FormatNumber(targetValue.SpeedDecreasePercent));
+        text = text.Replace("{speedDecreaseDelta}", FormatSignedNumber(deltaValue.SpeedDecreasePercent));
+        text = text.Replace("{speedIncrease}", FormatNumber(targetValue.SpeedIncreasePercent));
+        text = text.Replace("{speedIncreaseDelta}", FormatSignedNumber(deltaValue.SpeedIncreasePercent));
+        text = text.Replace("{angle}", FormatNumber(targetValue.AngleVariance));
+        text = text.Replace("{angleDelta}", FormatSignedNumber(deltaValue.AngleVariance));
         return text;
     }
 
     protected abstract SkillDescriptionValue GetDescriptionValue(int level);
 
-    public static float ToPercent(float value)
+    internal static float ToPercent(float value)
     {
         return value * 100f;
     }
@@ -89,6 +99,11 @@ public struct SkillDescriptionValue
     public float ExtraDamagePercent;
     public float DamageMultiplierPercent;
     public float PassiveDamageAdd;
+    public float DamageDecreasePercent;
+    public float DamageIncreasePercent;
+    public float SpeedDecreasePercent;
+    public float SpeedIncreasePercent;
+    public float AngleVariance;
 
     public static SkillDescriptionValue operator -(SkillDescriptionValue left, SkillDescriptionValue right)
     {
@@ -102,7 +117,12 @@ public struct SkillDescriptionValue
             SlowPercent = left.SlowPercent - right.SlowPercent,
             ExtraDamagePercent = left.ExtraDamagePercent - right.ExtraDamagePercent,
             DamageMultiplierPercent = left.DamageMultiplierPercent - right.DamageMultiplierPercent,
-            PassiveDamageAdd = left.PassiveDamageAdd - right.PassiveDamageAdd
+            PassiveDamageAdd = left.PassiveDamageAdd - right.PassiveDamageAdd,
+            DamageDecreasePercent = left.DamageDecreasePercent - right.DamageDecreasePercent,
+            DamageIncreasePercent = left.DamageIncreasePercent - right.DamageIncreasePercent,
+            SpeedDecreasePercent = left.SpeedDecreasePercent - right.SpeedDecreasePercent,
+            SpeedIncreasePercent = left.SpeedIncreasePercent - right.SpeedIncreasePercent,
+            AngleVariance = left.AngleVariance - right.AngleVariance
         };
     }
 }

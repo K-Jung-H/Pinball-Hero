@@ -1,14 +1,8 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Transform))]
 public class BallFactory : MonoBehaviour
 {
     [SerializeField] private BallCatalogSO ballCatalog;
-
-    public Ball_Base Create(BallType type, Vector3 position, Transform parent)
-    {
-        return Create(type, position, parent, null, null);
-    }
 
     public Ball_Base Create(
         BallType type,
@@ -39,7 +33,6 @@ public class BallFactory : MonoBehaviour
 
         Ball_Base ball = Instantiate(prefab, position, Quaternion.identity, parent);
         FillRuntimeStat(type, stageBallProgresses, runSkillInventory, ball.RuntimeStat);
-        ball.ApplyRuntimeStat();
 
         return ball;
     }

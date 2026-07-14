@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c87703126838b4a4caff29033c7b44c1, type: 3}
+  m_Name: Wave 02
+  m_EditorClassIdentifier: Assembly-CSharp::WaveDefinitionSO
+  boardWidth: 10
+  waveHeight: 8
+  spawnEntries:
+  - enemy: {fileID: 11400000, guid: 91c06fadfc3db0d4895c05f5e28bddc7, type: 2}
+    column: 0
+    row: 0
+  - enemy: {fileID: 11400000, guid: c0bb9646c728e8b4e992ce3cf1361e8e, type: 2}
+    column: 2
+    row: 0
+  - enemy: {fileID: 11400000, guid: c0bb9646c728e8b4e992ce3cf1361e8e, type: 2}
+    column: 3
+    row: 0
+  - enemy: {fileID: 11400000, guid: aafe609657319be4aabb8e8c6fb76276, type: 2}
+    column: 4
+    row: 0
+  - enemy: {fileID: 11400000, guid: e5daaa23e3444cf4592b6f3e5e5e41d5, type: 2}
+    column: 8
+    row: 0
+  - enemy: {fileID: 11400000, guid: e5daaa23e3444cf4592b6f3e5e5e41d5, type: 2}
+    column: 6
+    row: 1
+  - enemy: {fileID: 11400000, guid: 91c06fadfc3db0d4895c05f5e28bddc7, type: 2}
+    column: 0
+    row: 2
+  - enemy: {fileID: 11400000, guid: c0bb9646c728e8b4e992ce3cf1361e8e, type: 2}
+    column: 2
+    row: 2
+  - enemy: {fileID: 11400000, guid: c0bb9646c728e8b4e992ce3cf1361e8e, type: 2}
+    column: 3
+    row: 2
+  - enemy: {fileID: 11400000, guid: aafe609657319be4aabb8e8c6fb76276, type: 2}
+    column: 4
+    row: 2
+  - enemy: {fileID: 11400000, guid: e5daaa23e3444cf4592b6f3e5e5e41d5, type: 2}
+    column: 8
+    row: 2
+  - enemy: {fileID: 11400000, guid: e5daaa23e3444cf4592b6f3e5e5e41d5, type: 2}
+    column: 6
+    row: 3
+  - enemy: {fileID: 11400000, guid: 91c06fadfc3db0d4895c05f5e28bddc7, type: 2}
+    column: 0
+    row: 4
+  - enemy: {fileID: 11400000, guid: c0bb9646c728e8b4e992ce3cf1361e8e, type: 2}
+    column: 2
+    row: 4
+  - enemy: {fileID: 11400000, guid: c0bb9646c728e8b4e992ce3cf1361e8e, type: 2}
+    column: 3
+    row: 4
+  - enemy: {fileID: 11400000, guid: aafe609657319be4aabb8e8c6fb76276, type: 2}
+    column: 4
+    row: 4
+  - enemy: {fileID: 11400000, guid: e5daaa23e3444cf4592b6f3e5e5e41d5, type: 2}
+    column: 8
+    row: 4
+  - enemy: {fileID: 11400000, guid: e5daaa23e3444cf4592b6f3e5e5e41d5, type: 2}
+    column: 6
+    row: 5
+  - enemy: {fileID: 11400000, guid: 91c06fadfc3db0d4895c05f5e28bddc7, type: 2}
+    column: 0
+    row: 6
+  - enemy: {fileID: 11400000, guid: c0bb9646c728e8b4e992ce3cf1361e8e, type: 2}
+    column: 2
+    row: 6
+  - enemy: {fileID: 11400000, guid: aafe609657319be4aabb8e8c6fb76276, type: 2}
+    column: 4
+    row: 6
+  - enemy: {fileID: 11400000, guid: e5daaa23e3444cf4592b6f3e5e5e41d5, type: 2}
+    column: 8
+    row: 6
+  - enemy: {fileID: 11400000, guid: e5daaa23e3444cf4592b6f3e5e5e41d5, type: 2}
+    column: 6
+    row: 7
+

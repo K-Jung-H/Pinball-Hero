@@ -10,7 +10,6 @@ public sealed class RunSkillInventory
     [SerializeField] private List<RunSkillState> activeSkills = new List<RunSkillState>(4);
     [SerializeField] private List<RunSkillState> passiveSkills = new List<RunSkillState>(2);
 
-    public int ActiveSkillCount => activeSkills.Count;
     public int PassiveSkillCount => passiveSkills.Count;
     public int MaxActiveSkillCount => Mathf.Max(0, maxActiveSkillCount);
     public int MaxPassiveSkillCount => Mathf.Max(0, maxPassiveSkillCount);
@@ -76,16 +75,6 @@ public sealed class RunSkillInventory
         }
 
         return false;
-    }
-
-    public int GetActiveSkillLevelForBall(BallType ballType)
-    {
-        if (TryGetActiveBallSkill(ballType, out _, out int level))
-        {
-            return level;
-        }
-
-        return 0;
     }
 
     public bool TryGetActiveBallSkill(

@@ -92,7 +92,7 @@ public sealed class AreaEffectSystem : MonoBehaviour
 
         if (area != null)
         {
-            area.gameObject.SetActive(false);
+            area.ResetState();
         }
     }
 
@@ -163,7 +163,7 @@ public sealed class AreaEffectSystem : MonoBehaviour
                 return;
             }
 
-            area.gameObject.SetActive(false);
+            area.ResetState();
             availableAreas.Enqueue(area);
         }
 

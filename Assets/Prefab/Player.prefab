@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c13f73ebefd35f44cb5f7d15741393b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteHpBar
-  backgroundSprite: {fileID: 4447494551950944407}
   fillSprite: {fileID: 215122159212565443}
   fillColorByHpRatio:
     serializedVersion: 2
@@ -582,7 +581,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3cd73b195fdf8b24b93f7c6b994ddfb5, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   hpMax: 100
   hpBar: {fileID: 6310081841074267111}
   playerRenderer: {fileID: 7596003906225895772}
@@ -598,7 +597,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2d169d319d0a0284486ba10377cc0fa2, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: '::'
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerRenderer
   characterHead: {fileID: 8724578552670522801}
   characterBody: {fileID: 9036805880757208696}
   headLeftOffset: {x: 0, y: 0.3}

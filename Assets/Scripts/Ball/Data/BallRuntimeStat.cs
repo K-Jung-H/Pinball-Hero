@@ -54,17 +54,6 @@ public sealed class BallRuntimeStat
         }
     }
 
-    public void ApplyGrowthLevel(BallGrowthLevelData levelData)
-    {
-        if (levelData == null)
-        {
-            return;
-        }
-
-        ApplyHitDamageModifier(levelData.HitDamageAdd, levelData.HitDamageMultiplier);
-        ApplyMoveSpeedMultiplier(levelData.MoveSpeedMultiplier);
-    }
-
     public void ApplyHitDamageModifier(int add, float multiplier)
     {
         float safeMultiplier = multiplier <= 0f ? 1f : multiplier;
@@ -290,5 +279,61 @@ public sealed class ClusterEffectRuntimeStat : BallEffectRuntimeStat
     {
         float safeMultiplier = damageMultiplier <= 0f ? 1f : damageMultiplier;
         SpawnDamage = Mathf.Max(0, Mathf.RoundToInt((SpawnDamage + damageAdd) * safeMultiplier));
+    }
+}
+
+public sealed class RandomEffectRuntimeStat : BallEffectRuntimeStat
+{
+    public RandomEffectRuntimeStat(RandomEffectDefinitionSO definition)
+        : base(BallEffectType.Randomize)
+    {
+        ResetFrom(definition);
+    }
+
+    public float DamageDecreaseRatio { get; private set; }
+    public float DamageIncreaseRatio { get; private set; }
+    public float SpeedDecreaseRatio { get; private set; }
+    public float SpeedIncreaseRatio { get; private set; }
+    public float AngleVariance { get; private set; }
+
+    public override void ResetFrom(BallEffectDefinitionSO definition)
+    {
+        RandomEffectDefinitionSO random = definition as RandomEffectDefinitionSO;
+
+        SetRanges(
+            random != null ? random.BaseDamageDecreaseRatio : 0f,
+            random != null ? random.BaseDamageIncreaseRatio : 0f,
+            random != null ? random.BaseSpeedDecreaseRatio : 0f,
+            random != null ? random.BaseSpeedIncreaseRatio : 0f,
+            random != null ? random.BaseAngleVariance : 0f);
+    }
+
+    public void SetCardLevel(
+        float damageDecreaseRatio,
+        float damageIncreaseRatio,
+        float speedDecreaseRatio,
+        float speedIncreaseRatio,
+        float angleVariance)
+    {
+        SetRanges(
+            damageDecreaseRatio,
+            damageIncreaseRatio,
+            speedDecreaseRatio,
+            speedIncreaseRatio,
+            angleVariance);
+    }
+
+    private void SetRanges(
+        float damageDecreaseRatio,
+        float damageIncreaseRatio,
+        float speedDecreaseRatio,
+        float speedIncreaseRatio,
+        float angleVariance)
+    {
+        DamageDecreaseRatio = Mathf.Clamp(damageDecreaseRatio, 0f, 0.95f);
+        DamageIncreaseRatio = Mathf.Max(0f, damageIncreaseRatio);
+        SpeedDecreaseRatio = Mathf.Clamp(speedDecreaseRatio, 0f, 0.95f);
+        SpeedIncreaseRatio = Mathf.Max(0f, speedIncreaseRatio);
+        AngleVariance = Mathf.Clamp(angleVariance, 0f, 89f);
     }
 }

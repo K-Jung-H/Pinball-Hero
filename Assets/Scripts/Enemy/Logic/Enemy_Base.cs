@@ -1,33 +1,31 @@
 using System;
 using UnityEngine;
 
-public enum EnemyState
-{
-    Moving,
-    Attacking,
-    Dead
-}
-
 public class Enemy_Base : MonoBehaviour
 {
+    private enum EnemyState
+    {
+        Moving,
+        Attacking,
+        Dead
+    }
+
     private static int endlineLayer = -1;
 
-    [SerializeField] private int hpMax;
-    [SerializeField] private int hpCurrent;
     [SerializeField] private SpriteHpBar hpBar;
     [SerializeField] private Collider2D bodyCollider;
     [SerializeField] private Collider2D hitTriggerCollider;
     [SerializeField] private StatusController statusController;
 
     private int damage;
+    private int hpMax;
+    private int hpCurrent;
     private float speed;
     private EnemyState state;
     private Transform attackTarget;
+    private bool isDespawned;
 
-    public int Damage => damage;
-    public bool IsDead => state == EnemyState.Dead;
     public bool CanReceiveDamage => state == EnemyState.Moving;
-    public EnemyState State => state;
     public Transform AttackTarget => attackTarget;
     public StatusController StatusController => statusController;
     public Collider2D BodyCollider => bodyCollider;
@@ -39,7 +37,7 @@ public class Enemy_Base : MonoBehaviour
     public event Action<Enemy_Base> EnemyDied;
     public event Action<Enemy_Base> EndlineReached;
     public event Action<Enemy_Base, int> EnemyAttackCompleted;
-    public event Action<Enemy_Base, int, int> HpChanged;
+    public event Action<Enemy_Base> Despawned;
 
     private void Awake()
     {
@@ -82,6 +80,7 @@ public class Enemy_Base : MonoBehaviour
         hpMax = enemyDefinition.MaxHp;
         hpCurrent = hpMax;
         state = EnemyState.Moving;
+        isDespawned = false;
 
         SetCollidersEnabled(true);
 
@@ -157,8 +156,6 @@ public class Enemy_Base : MonoBehaviour
             hpBar.Show();
         }
 
-        HpChanged?.Invoke(this, hpCurrent, hpMax);
-
         if (hpCurrent <= 0)
         {
             Die();
@@ -168,11 +165,11 @@ public class Enemy_Base : MonoBehaviour
         EnemyDamaged?.Invoke(this);
     }
 
-    public bool ReachEndline()
+    private void ReachEndline()
     {
         if (state != EnemyState.Moving)
         {
-            return false;
+            return;
         }
 
         state = EnemyState.Attacking;
@@ -186,8 +183,6 @@ public class Enemy_Base : MonoBehaviour
         }
 
         EndlineReached?.Invoke(this);
-
-        return true;
     }
 
     public void CompleteEndlineAttack()
@@ -204,8 +199,24 @@ public class Enemy_Base : MonoBehaviour
 
     public void Despawn()
     {
+        if (isDespawned)
+        {
+            return;
+        }
+
+        isDespawned = true;
+        state = EnemyState.Dead;
+        attackTarget = null;
+        SetCollidersEnabled(false);
         statusController?.ResetState();
+
+        if (hpBar != null)
+        {
+            hpBar.Hide();
+        }
+
         gameObject.SetActive(false);
+        Despawned?.Invoke(this);
     }
 
     private void Die()
@@ -215,7 +226,6 @@ public class Enemy_Base : MonoBehaviour
             return;
         }
 
-        Debug.Log("Enemy Dead!");
         state = EnemyState.Dead;
 
         SetCollidersEnabled(false);

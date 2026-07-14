@@ -19,8 +19,6 @@ public class PlayerController : MonoBehaviour
     private Vector2 lastAimDirection = Vector2.up;
 
     public BallShooter BallShooter => ballShooter;
-    public int HpMax => hpMax;
-    public int HpCurrent => hpCurrent;
     public bool IsDead => hpCurrent <= 0;
 
     public event Action PlayerDied;

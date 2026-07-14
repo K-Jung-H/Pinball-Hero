@@ -17,4 +17,4 @@ MonoBehaviour:
   damage: 10
   cellWidth: 2
   cellHeight: 1
-  moveSpeed: 5
+  moveSpeed: 1

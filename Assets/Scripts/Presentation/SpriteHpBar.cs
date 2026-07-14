@@ -2,7 +2,6 @@ using UnityEngine;
 
 public sealed class SpriteHpBar : MonoBehaviour
 {
-    [SerializeField] private SpriteRenderer backgroundSprite;
     [SerializeField] private SpriteRenderer fillSprite;
     [SerializeField] private Gradient fillColorByHpRatio;
 

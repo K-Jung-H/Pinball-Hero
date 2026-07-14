@@ -3,8 +3,8 @@ using UnityEngine.SceneManagement;
 
 public sealed class SceneNavigator : MonoBehaviour
 {
-    [SerializeField] private string startSceneName = "Start";
-    [SerializeField] private string gameSceneName = "Game";
+    [SerializeField] private string startSceneName = "Scene Lobby";
+    [SerializeField] private string gameSceneName = "Scene Stage";
 
     public void LoadStartScene()
     {

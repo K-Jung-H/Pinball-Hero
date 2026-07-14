@@ -26,8 +26,8 @@ public sealed class StatusController : MonoBehaviour
     private float freezeExtraDamageRatio;
     private EnemyVisualStatus visualStatus;
 
-    public bool IsBurning => burnStackCount > 0;
-    public bool IsFrozen => freezeRemainingTime > 0f;
+    private bool IsBurning => burnStackCount > 0;
+    private bool IsFrozen => freezeRemainingTime > 0f;
     public EnemyVisualStatus VisualStatus => visualStatus;
 
     public event Action<EnemyVisualStatus> VisualStatusChanged;

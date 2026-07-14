@@ -11,8 +11,6 @@ public sealed class StageResultController : MonoBehaviour
     private bool isPaused;
     private float previousTimeScale = 1f;
 
-    public bool IsPaused => isPaused;
-
     private void Update()
     {
         if (Keyboard.current != null
